@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teranga Immo — Immobilier au Sénégal</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <img src="logo.png" alt="Teranga Immo" class="logo-img"/>
+        <span>Teranga Immo</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#biens">Nos Biens</a></li>
+        <li><a href="#recherche">Rechercher</a></li>
+        <li><a href="#apropos">À Propos</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn-outline" onclick="ouvrirModal('modal-connexion')">Connexion</button>
+        <button class="btn-primary" onclick="ouvrirModal('modal-inscription')">S'inscrire</button>
+      </div>
+      <button class="burger" id="burger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <section class="hero" id="accueil">
+    <div class="hero-bg">
+      <img src="appartvuesurmer.png" alt="Vue sur mer" class="hero-img"/>
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Dakar · Saly Portudal · Mbour</p>
+      <h1 class="hero-title">Trouvez votre<br/><em>bien idéal</em><br/>au Sénégal</h1>
+      <p class="hero-sub">Villas, appartements, résidences et hôtels — location et vente</p>
+      <div class="hero-cta">
+        <button class="btn-hero-primary" onclick="scrollTo('#recherche')">Rechercher un bien</button>
+        <button class="btn-hero-outline" onclick="scrollTo('#biens')">Voir nos biens</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num" data-target="120">0</span><span class="stat-label">Biens disponibles</span></div>
+        <div class="stat-sep"></div>
+        <div class="stat"><span class="stat-num" data-target="3">0</span><span class="stat-label">Villes couvertes</span></div>
+        <div class="stat-sep"></div>
+        <div class="stat"><span class="stat-num" data-target="500">0</span><span class="stat-label">Clients satisfaits</span></div>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Découvrir</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <section class="recherche" id="recherche">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Recherche</span>
+        <h2 class="section-title">Trouvez votre bien</h2>
+      </div>
+      <div class="search-box">
+        <div class="search-tabs">
+          <button class="tab active" data-type="location" onclick="setType('location', this)">Location</button>
+          <button class="tab" data-type="vente" onclick="setType('vente', this)">Vente</button>
+        </div>
+        <div class="search-filters">
+          <div class="filter-group">
+            <label>Ville</label>
+            <select id="filtre-ville">
+              <option value="">Toutes les villes</option>
+              <option value="1">Dakar</option>
+              <option value="2">Saly Portudal</option>
+              <option value="3">Mbour</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Type de bien</label>
+            <select id="filtre-categorie">
+              <option value="">Tous types</option>
+              <option value="1">Appartement</option>
+              <option value="2">Villa</option>
+              <option value="3">Studio</option>
+              <option value="4">Chambre d'hôtel</option>
+              <option value="7">Résidence meublée</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Budget max (FCFA)</label>
+            <input type="number" id="filtre-prix" placeholder="Ex : 500 000"/>
+          </div>
+          <div class="filter-group">
+            <label>Chambres min.</label>
+            <select id="filtre-chambres">
+              <option value="">Peu importe</option>
+              <option value="1">1+</option>
+              <option value="2">2+</option>
+              <option value="3">3+</option>
+              <option value="4">4+</option>
+            </select>
+          </div>
+        </div>
+        <div class="search-options">
+          <label class="checkbox-label"><input type="checkbox" id="filtre-meuble"/> Meublé</label>
+          <label class="checkbox-label"><input type="checkbox" id="filtre-piscine"/> Piscine</label>
+        </div>
+        <button class="btn-search" onclick="rechercherBiens()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Rechercher
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="biens-section" id="biens">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Sélection</span>
+        <h2 class="section-title">Nos biens en vedette</h2>
+        <p class="section-sub">Une sélection de nos meilleures propriétés à Dakar, Saly et Mbour</p>
+      </div>
+      <div class="biens-grid" id="biens-grid">
+
+        <article class="bien-card" data-id="1">
+          <div class="card-img-wrap">
+            <img src="appartvuesurmer.png" alt="Appartement vue sur mer" loading="lazy"/>
+            <span class="card-badge location">Location</span>
+            <button class="card-fav" onclick="toggleFavori(this, 1)" title="Ajouter aux favoris">♡</button>
+          </div>
+          <div class="card-body">
+            <div class="card-ville">📍 Saly Portudal</div>
+            <h3 class="card-titre">Appartement vue sur mer</h3>
+            <div class="card-features">
+              <span>🛏 3 chambres</span>
+              <span>🚿 2 salles de bain</span>
+              <span>📐 120 m²</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-prix">1 000 000 <small>FCFA/mois</small></div>
+              <button class="btn-card" onclick="voirBien(1)">Voir</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="bien-card" data-id="2">
+          <div class="card-img-wrap">
+            <img src="appartvuepiscine.png" alt="Villa avec piscine" loading="lazy"/>
+            <span class="card-badge vente">Vente</span>
+            <button class="card-fav" onclick="toggleFavori(this, 2)" title="Ajouter aux favoris">♡</button>
+          </div>
+          <div class="card-body">
+            <div class="card-ville">📍 Saly Portudal</div>
+            <h3 class="card-titre">Villa avec piscine</h3>
+            <div class="card-features">
+              <span>🛏 5 chambres</span>
+              <span>🏊 Piscine</span>
+              <span>📐 350 m²</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-prix">85 000 000 <small>FCFA</small></div>
+              <button class="btn-card" onclick="voirBien(2)">Voir</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="bien-card" data-id="3">
+          <div class="card-img-wrap">
+            <img src="appartvuepiscine.png" alt="Appartement vue piscine" loading="lazy"/>
+            <span class="card-badge location">Location</span>
+            <button class="card-fav" onclick="toggleFavori(this, 3)" title="Ajouter aux favoris">♡</button>
+          </div>
+          <div class="card-body">
+            <div class="card-ville">📍 Mbour</div>
+            <h3 class="card-titre">Appartement vue piscine</h3>
+            <div class="card-features">
+              <span>🛏 2 chambres</span>
+              <span>🏊 Piscine</span>
+              <span>📐 85 m²</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-prix">1 200 000 <small>FCFA/mois</small></div>
+              <button class="btn-card" onclick="voirBien(3)">Voir</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="bien-card" data-id="4">
+          <div class="card-img-wrap">
+            <img src="residence.png" alt="Résidence" loading="lazy"/>
+            <span class="card-badge location">Location</span>
+            <button class="card-fav" onclick="toggleFavori(this, 4)" title="Ajouter aux favoris">♡</button>
+          </div>
+          <div class="card-body">
+            <div class="card-ville">📍 Dakar</div>
+            <h3 class="card-titre">Résidence meublée</h3>
+            <div class="card-features">
+              <span>🛏 4 chambres</span>
+              <span>❄️ Climatisée</span>
+              <span>📐 200 m²</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-prix">600 000 <small>FCFA/mois</small></div>
+              <button class="btn-card" onclick="voirBien(4)">Voir</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="bien-card" data-id="5">
+          <div class="card-img-wrap">
+            <img src="villaavendre.png" alt="Villa à vendre" loading="lazy"/>
+            <span class="card-badge vente">Vente</span>
+            <button class="card-fav" onclick="toggleFavori(this, 5)" title="Ajouter aux favoris">♡</button>
+          </div>
+          <div class="card-body">
+            <div class="card-ville">📍 Dakar</div>
+            <h3 class="card-titre">Villa à vendre</h3>
+            <div class="card-features">
+              <span>🛏 4 chambres</span>
+              <span>🚗 Parking</span>
+              <span>📐 280 m²</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-prix">200 000 000 <small>FCFA</small></div>
+              <button class="btn-card" onclick="voirBien(5)">Voir</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="bien-card" data-id="6">
+          <div class="card-img-wrap">
+            <img src="appartnonmeuble.png" alt="Appartement non meublé" loading="lazy"/>
+            <span class="card-badge location">Location</span>
+            <button class="card-fav" onclick="toggleFavori(this, 6)" title="Ajouter aux favoris">♡</button>
+          </div>
+          <div class="card-body">
+            <div class="card-ville">📍 Dakar</div>
+            <h3 class="card-titre">Appartement non meublé</h3>
+            <div class="card-features">
+              <span>🛏 2 chambres</span>
+              <span>🚿 1 salle de bain</span>
+              <span>📐 75 m²</span>
+            </div>
+            <div class="card-footer">
+              <div class="card-prix">1 200 000 <small>FCFA/mois</small></div>
+              <button class="btn-card" onclick="voirBien(6)">Voir</button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+      <div class="biens-more">
+        <button class="btn-outline-dark" onclick="chargerPlusBiens()">Voir tous les biens</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="apropos" id="apropos">
+    <div class="container apropos-inner">
+      <div class="apropos-img-wrap">
+        <img src="residence.png" alt="À propos Teranga Immo"/>
+        <div class="apropos-badge">
+          <span class="badge-num">10+</span>
+          <span class="badge-txt">ans d'expérience</span>
+        </div>
+      </div>
+      <div class="apropos-text">
+        <span class="section-tag">À Propos</span>
+        <h2 class="section-title">L'immobilier sénégalais,<br/>à portée de clic</h2>
+        <p>Teranga Immo est une plateforme immobilière dédiée au marché sénégalais. Nous accompagnons résidents locaux, expatriés, touristes et investisseurs dans la recherche, la location et l'achat de biens immobiliers à Dakar, Saly Portudal et Mbour.</p>
+        <p>Notre mission : offrir une vitrine digitale professionnelle, transparente et accessible 24h/24, pour simplifier toutes vos démarches immobilières.</p>
+        <div class="apropos-values">
+          <div class="value-item">
+            <div class="value-icon">🏡</div>
+            <div>
+              <strong>Large sélection</strong>
+              <p>Villas, appartements, studios, résidences hôtelières</p>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-icon">🔒</div>
+            <div>
+              <strong>Transactions sécurisées</strong>
+              <p>Paiement via Wave, Orange Money, virement</p>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-icon">📱</div>
+            <div>
+              <strong>Disponible 24h/24</strong>
+              <p>Réservez et consultez en ligne à tout moment</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="container contact-inner">
+      <div class="contact-info">
+        <span class="section-tag light">Contact</span>
+        <h2 class="section-title light">Parlons de votre projet</h2>
+        <p class="contact-desc">Vous avez une question ou souhaitez visiter un bien ? Notre équipe vous répond sous 24h.</p>
+        <div class="contact-details">
+          <div class="contact-item">
+            <span class="contact-icon">📍</span>
+            <span>Dakar, Saly Portudal, Mbour — Sénégal</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">📞</span>
+            <span>+221 77 000 00 00</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">✉️</span>
+            <span>contact@teranga-immo.sn</span>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form-wrap">
+        <form class="contact-form" onsubmit="envoyerDemande(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nom complet</label>
+              <input type="text" id="c-nom" placeholder="Votre nom" required/>
+            </div>
+            <div class="form-group">
+              <label>Téléphone</label>
+              <input type="tel" id="c-tel" placeholder="+221 77 000 00 00"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="c-email" placeholder="votre@email.com" required/>
+          </div>
+          <div class="form-group">
+            <label>Type de demande</label>
+            <select id="c-type">
+              <option value="renseignement">Renseignement</option>
+              <option value="visite">Demande de visite</option>
+              <option value="offre_achat">Offre d'achat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea id="c-message" rows="4" placeholder="Décrivez votre projet ou posez votre question..." required></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Envoyer le message</button>
+          <div class="form-success" id="form-success">✅ Votre message a été envoyé ! Nous vous répondons sous 24h.</div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="logo.png" alt="Logo" class="footer-logo"/>
+        <p>La plateforme immobilière de référence au Sénégal.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Navigation</h4>
+        <a href="#biens">Nos biens</a>
+        <a href="#recherche">Rechercher</a>
+        <a href="#apropos">À propos</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-links">
+        <h4>Villes</h4>
+        <a href="#">Dakar</a>
+        <a href="#">Saly Portudal</a>
+        <a href="#">Mbour</a>
+      </div>
+      <div class="footer-links">
+        <h4>Mon compte</h4>
+        <a href="#" onclick="ouvrirModal('modal-connexion')">Connexion</a>
+        <a href="#" onclick="ouvrirModal('modal-inscription')">S'inscrire</a>
+        <a href="#">Mes favoris</a>
+        <a href="#">Mes réservations</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Teranga Immo — Tous droits réservés</p>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="modal-connexion" onclick="fermerModalOverlay(event, 'modal-connexion')">
+    <div class="modal">
+      <button class="modal-close" onclick="fermerModal('modal-connexion')">✕</button>
+      <h2 class="modal-title">Connexion</h2>
+      <form onsubmit="connecter(event)">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="votre@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="login-mdp" placeholder="••••••••" required/>
+        </div>
+        <div class="modal-error" id="login-error"></div>
+        <button type="submit" class="btn-submit">Se connecter</button>
+      </form>
+      <p class="modal-switch">Pas encore de compte ? <a href="#" onclick="switchModal('modal-connexion','modal-inscription')">S'inscrire</a></p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-inscription" onclick="fermerModalOverlay(event, 'modal-inscription')">
+    <div class="modal">
+      <button class="modal-close" onclick="fermerModal('modal-inscription')">✕</button>
+      <h2 class="modal-title">Créer un compte</h2>
+      <form onsubmit="inscrire(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom</label>
+            <input type="text" id="reg-nom" placeholder="Diallo" required/>
+          </div>
+          <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" id="reg-prenom" placeholder="Fatou" required/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="votre@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label>Téléphone</label>
+          <input type="tel" id="reg-tel" placeholder="+221 77 000 00 00"/>
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="reg-mdp" placeholder="Min. 6 caractères" required/>
+        </div>
+        <div class="modal-error" id="reg-error"></div>
+        <div class="modal-success" id="reg-success"></div>
+        <button type="submit" class="btn-submit">Créer mon compte</button>
+      </form>
+      <p class="modal-switch">Déjà un compte ? <a href="#" onclick="switchModal('modal-inscription','modal-connexion')">Se connecter</a></p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-bien" onclick="fermerModalOverlay(event, 'modal-bien')">
+    <div class="modal modal-large">
+      <button class="modal-close" onclick="fermerModal('modal-bien')">✕</button>
+      <div id="modal-bien-content"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,456 @@
+// ============================================================
+//  TERANGA IMMO — script.js
+//  Connexion au backend Node.js via fetch()
+// ============================================================
+
+const API = 'http://localhost:3000/api';
+let typeRecherche = 'location';
+let tokenJWT = localStorage.getItem('teranga_token') || null;
+
+// ════════════════════════════════════════════════════════════
+//  UTILITAIRES
+// ════════════════════════════════════════════════════════════
+
+function afficherToast(message, duree = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = message;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duree);
+}
+
+function scrollTo(cible) {
+  document.querySelector(cible).scrollIntoView({ behavior: 'smooth' });
+}
+
+function headersAuth() {
+  const h = { 'Content-Type': 'application/json' };
+  if (tokenJWT) h['Authorization'] = 'Bearer ' + tokenJWT;
+  return h;
+}
+
+// ════════════════════════════════════════════════════════════
+//  NAVBAR — scroll + burger
+// ════════════════════════════════════════════════════════════
+
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+function toggleMenu() {
+  const links = document.querySelector('.nav-links');
+  const actions = document.querySelector('.nav-actions');
+  if (links) links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+  if (actions) actions.style.display = actions.style.display === 'flex' ? 'none' : 'flex';
+}
+
+// ════════════════════════════════════════════════════════════
+//  COMPTEUR ANIMÉ (hero stats)
+// ════════════════════════════════════════════════════════════
+
+function animerCompteurs() {
+  document.querySelectorAll('.stat-num').forEach(el => {
+    const cible = parseInt(el.dataset.target);
+    const duree = 2000;
+    const pas = cible / (duree / 16);
+    let compteur = 0;
+    const timer = setInterval(() => {
+      compteur += pas;
+      if (compteur >= cible) { compteur = cible; clearInterval(timer); }
+      el.textContent = Math.floor(compteur).toLocaleString('fr-FR');
+    }, 16);
+  });
+}
+
+window.addEventListener('load', () => {
+  setTimeout(animerCompteurs, 600);
+});
+
+// ════════════════════════════════════════════════════════════
+//  MODALS
+// ════════════════════════════════════════════════════════════
+
+function ouvrirModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fermerModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function fermerModalOverlay(event, id) {
+  if (event.target === document.getElementById(id)) fermerModal(id);
+}
+
+function switchModal(fermer, ouvrir) {
+  fermerModal(fermer);
+  setTimeout(() => ouvrirModal(ouvrir), 200);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    ['modal-connexion','modal-inscription','modal-bien'].forEach(fermerModal);
+  }
+});
+
+// ════════════════════════════════════════════════════════════
+//  AUTHENTIFICATION
+// ════════════════════════════════════════════════════════════
+
+async function inscrire(event) {
+  event.preventDefault();
+  const errEl  = document.getElementById('reg-error');
+  const okEl   = document.getElementById('reg-success');
+  errEl.classList.remove('visible');
+  okEl.classList.remove('visible');
+
+  const body = {
+    nom:          document.getElementById('reg-nom').value.trim(),
+    prenom:       document.getElementById('reg-prenom').value.trim(),
+    email:        document.getElementById('reg-email').value.trim(),
+    telephone:    document.getElementById('reg-tel').value.trim(),
+    mot_de_passe: document.getElementById('reg-mdp').value
+  };
+
+  try {
+    const res  = await fetch(`${API}/auth/inscription`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      errEl.textContent = data.message;
+      errEl.classList.add('visible');
+      return;
+    }
+
+    okEl.textContent = '✅ Compte créé ! Vous pouvez vous connecter.';
+    okEl.classList.add('visible');
+    setTimeout(() => switchModal('modal-inscription', 'modal-connexion'), 1500);
+
+  } catch {
+    errEl.textContent = 'Erreur réseau. Vérifiez que le serveur est démarré.';
+    errEl.classList.add('visible');
+  }
+}
+
+async function connecter(event) {
+  event.preventDefault();
+  const errEl = document.getElementById('login-error');
+  errEl.classList.remove('visible');
+
+  const body = {
+    email:        document.getElementById('login-email').value.trim(),
+    mot_de_passe: document.getElementById('login-mdp').value
+  };
+
+  try {
+    const res  = await fetch(`${API}/auth/connexion`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      errEl.textContent = data.message;
+      errEl.classList.add('visible');
+      return;
+    }
+
+    tokenJWT = data.token;
+    localStorage.setItem('teranga_token', tokenJWT);
+    fermerModal('modal-connexion');
+    afficherToast(`👋 Bienvenue ${data.utilisateur.prenom} !`);
+    mettreAJourNavbar(data.utilisateur);
+
+  } catch {
+    errEl.textContent = 'Erreur réseau. Vérifiez que le serveur est démarré.';
+    errEl.classList.add('visible');
+  }
+}
+
+function mettreAJourNavbar(utilisateur) {
+  const actions = document.querySelector('.nav-actions');
+  if (actions) {
+    actions.innerHTML = `
+      <span style="font-size:0.85rem;color:var(--gris-texte)">
+        ${utilisateur.prenom} ${utilisateur.nom}
+      </span>
+      <button class="btn-outline" onclick="deconnecter()">Déconnexion</button>
+    `;
+  }
+}
+
+function deconnecter() {
+  tokenJWT = null;
+  localStorage.removeItem('teranga_token');
+  location.reload();
+}
+
+// ════════════════════════════════════════════════════════════
+//  RECHERCHE / FILTRES
+// ════════════════════════════════════════════════════════════
+
+function setType(type, btn) {
+  typeRecherche = type;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+async function rechercherBiens() {
+  const ville     = document.getElementById('filtre-ville').value;
+  const categorie = document.getElementById('filtre-categorie').value;
+  const prix      = document.getElementById('filtre-prix').value;
+  const chambres  = document.getElementById('filtre-chambres').value;
+  const meuble    = document.getElementById('filtre-meuble').checked ? '1' : '';
+  const piscine   = document.getElementById('filtre-piscine').checked ? '1' : '';
+
+  const params = new URLSearchParams();
+  params.append('type', typeRecherche);
+  if (ville)     params.append('ville', ville);
+  if (categorie) params.append('categorie', categorie);
+  if (prix)      params.append('prix_max', prix);
+  if (chambres)  params.append('chambres', chambres);
+  if (meuble)    params.append('meuble', meuble);
+  if (piscine)   params.append('piscine', piscine);
+
+  scrollTo('#biens');
+
+  try {
+    const res  = await fetch(`${API}/biens?${params.toString()}`);
+    const data = await res.json();
+    afficherBiens(data.biens || []);
+    afficherToast(`${data.total} bien(s) trouvé(s)`);
+  } catch {
+    afficherToast('Erreur de connexion à l\'API.');
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  AFFICHAGE DES BIENS (résultats API)
+// ════════════════════════════════════════════════════════════
+
+function afficherBiens(biens) {
+  const grille = document.getElementById('biens-grid');
+
+  if (biens.length === 0) {
+    grille.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--gris-texte)">
+        <div style="font-size:3rem;margin-bottom:1rem">🏠</div>
+        <p>Aucun bien ne correspond à votre recherche.</p>
+      </div>`;
+    return;
+  }
+
+  grille.innerHTML = biens.map((b, i) => {
+    const prix = b.prix_vente
+      ? `${Number(b.prix_vente).toLocaleString('fr-FR')} <small>FCFA</small>`
+      : `${Number(b.prix_location).toLocaleString('fr-FR')} <small>FCFA/mois</small>`;
+    const badge = b.prix_vente ? 'vente' : 'location';
+    const photo = b.photo_principale
+      ? b.photo_principale
+      : `imageprojetperso/appartnonmeuble.png`;
+
+    return `
+      <article class="bien-card" style="animation-delay:${i * 0.08}s" data-id="${b.id_bien}">
+        <div class="card-img-wrap">
+          <img src="${photo}" alt="${b.titre}" loading="lazy"
+               onerror="this.src='imageprojetperso/appartnonmeuble.png'"/>
+          <span class="card-badge ${badge}">${badge === 'vente' ? 'Vente' : 'Location'}</span>
+          <button class="card-fav" onclick="toggleFavori(this, ${b.id_bien})" title="Favoris">♡</button>
+        </div>
+        <div class="card-body">
+          <div class="card-ville">📍 ${b.nom_ville || ''}</div>
+          <h3 class="card-titre">${b.titre}</h3>
+          <div class="card-features">
+            ${b.nb_chambres ? `<span>🛏 ${b.nb_chambres} chambre(s)</span>` : ''}
+            ${b.surface_m2  ? `<span>📐 ${b.surface_m2} m²</span>` : ''}
+            ${b.piscine     ? `<span>🏊 Piscine</span>` : ''}
+          </div>
+          <div class="card-footer">
+            <div class="card-prix">${prix}</div>
+            <button class="btn-card" onclick="voirBien(${b.id_bien})">Voir</button>
+          </div>
+        </div>
+      </article>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+//  DÉTAIL D'UN BIEN
+// ════════════════════════════════════════════════════════════
+
+async function voirBien(id) {
+  ouvrirModal('modal-bien');
+  document.getElementById('modal-bien-content').innerHTML = `
+    <div style="text-align:center;padding:3rem;color:var(--gris-texte)">Chargement...</div>`;
+
+  try {
+    const res = await fetch(`${API}/biens/${id}`);
+    const b   = await res.json();
+
+    const prix = b.prix_vente
+      ? `${Number(b.prix_vente).toLocaleString('fr-FR')} FCFA`
+      : `${Number(b.prix_location).toLocaleString('fr-FR')} FCFA/${b.periode_location || 'mois'}`;
+
+    const photos = b.photos && b.photos.length > 0
+      ? b.photos.map(p => `<img src="${p.url_photo}" alt="${b.titre}" style="width:100%;height:200px;object-fit:cover;border-radius:8px;"/>`).join('')
+      : `<img src="imageprojetperso/appartnonmeuble.png" alt="${b.titre}" style="width:100%;height:260px;object-fit:cover;border-radius:12px;"/>`;
+
+    document.getElementById('modal-bien-content').innerHTML = `
+      <div>
+        <div style="margin-bottom:1.5rem">${photos}</div>
+        <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+          <div>
+            <p style="font-size:0.8rem;color:var(--gris-texte);margin-bottom:0.3rem">
+              📍 ${b.nom_ville || ''} ${b.quartier ? '· ' + b.quartier : ''}
+            </p>
+            <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:600">${b.titre}</h2>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:var(--font-display);font-size:1.6rem;color:var(--vert);font-weight:600">${prix}</div>
+          </div>
+        </div>
+        <p style="color:var(--gris-texte);line-height:1.7;margin-bottom:1.5rem">${b.description || ''}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-bottom:2rem">
+          ${b.nb_chambres    ? `<span class="card-features span">🛏 ${b.nb_chambres} chambre(s)</span>` : ''}
+          ${b.nb_salles_bain ? `<span class="card-features span">🚿 ${b.nb_salles_bain} salle(s) de bain</span>` : ''}
+          ${b.surface_m2     ? `<span class="card-features span">📐 ${b.surface_m2} m²</span>` : ''}
+          ${b.meuble         ? `<span class="card-features span">🛋️ Meublé</span>` : ''}
+          ${b.piscine        ? `<span class="card-features span">🏊 Piscine</span>` : ''}
+          ${b.climatisation  ? `<span class="card-features span">❄️ Climatisé</span>` : ''}
+          ${b.parking        ? `<span class="card-features span">🚗 Parking</span>` : ''}
+          ${b.wifi           ? `<span class="card-features span">📶 Wi-Fi</span>` : ''}
+        </div>
+        ${b.agent ? `
+          <div style="background:var(--gris-clair);padding:1rem;border-radius:var(--radius);margin-bottom:1.5rem">
+            <p style="font-size:0.85rem;color:var(--gris-texte)">Agent responsable</p>
+            <p style="font-weight:600">${b.agent}</p>
+            ${b.tel_agent ? `<p style="font-size:0.9rem">${b.tel_agent}</p>` : ''}
+          </div>` : ''}
+        <button class="btn-submit" onclick="demanderVisite(${b.id_bien})">
+          Demander une visite
+        </button>
+      </div>`;
+
+  } catch {
+    document.getElementById('modal-bien-content').innerHTML =
+      '<p style="padding:2rem;color:var(--rouge)">Impossible de charger ce bien.</p>';
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  FAVORIS
+// ════════════════════════════════════════════════════════════
+
+async function toggleFavori(btn, idBien) {
+  if (!tokenJWT) {
+    ouvrirModal('modal-connexion');
+    afficherToast('Connectez-vous pour sauvegarder des favoris.');
+    return;
+  }
+  const estActif = btn.classList.contains('active');
+  const methode  = estActif ? 'DELETE' : 'POST';
+
+  try {
+    await fetch(`${API}/favoris/${idBien}`, {
+      method: methode,
+      headers: headersAuth()
+    });
+    btn.classList.toggle('active');
+    btn.textContent = estActif ? '♡' : '♥';
+    afficherToast(estActif ? 'Retiré des favoris' : '❤️ Ajouté aux favoris');
+  } catch {
+    afficherToast('Erreur réseau.');
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  DEMANDE DE VISITE
+// ════════════════════════════════════════════════════════════
+
+function demanderVisite(idBien) {
+  fermerModal('modal-bien');
+  setTimeout(() => {
+    document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+    afficherToast('Remplissez le formulaire pour demander une visite.');
+  }, 400);
+}
+
+// ════════════════════════════════════════════════════════════
+//  FORMULAIRE CONTACT → API
+// ════════════════════════════════════════════════════════════
+
+async function envoyerDemande(event) {
+  event.preventDefault();
+  const successEl = document.getElementById('form-success');
+  successEl.style.display = 'none';
+
+  const body = {
+    id_bien:       1,
+    nom_contact:   document.getElementById('c-nom').value.trim(),
+    email_contact: document.getElementById('c-email').value.trim(),
+    tel_contact:   document.getElementById('c-tel').value.trim(),
+    message:       document.getElementById('c-message').value.trim(),
+    type_demande:  document.getElementById('c-type').value
+  };
+
+  try {
+    const res = await fetch(`${API}/demandes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (res.ok) {
+      successEl.style.display = 'block';
+      event.target.reset();
+      afficherToast('✅ Message envoyé avec succès !');
+    } else {
+      afficherToast('Erreur lors de l\'envoi du message.');
+    }
+  } catch {
+    successEl.style.display = 'block';
+    event.target.reset();
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  CHARGER PLUS DE BIENS
+// ════════════════════════════════════════════════════════════
+
+async function chargerPlusBiens() {
+  try {
+    const res  = await fetch(`${API}/biens?limite=12`);
+    const data = await res.json();
+    afficherBiens(data.biens || []);
+    afficherToast(`${data.total} biens chargés depuis la base de données`);
+  } catch {
+    afficherToast('Impossible de charger les biens. Vérifiez que l\'API est démarrée.');
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  INIT — vérifier si déjà connecté
+// ════════════════════════════════════════════════════════════
+
+async function init() {
+  if (!tokenJWT) return;
+  try {
+    const res = await fetch(`${API}/auth/profil`, { headers: headersAuth() });
+    if (res.ok) {
+      const user = await res.json();
+      mettreAJourNavbar(user);
+    } else {
+      tokenJWT = null;
+      localStorage.removeItem('teranga_token');
+    }
+  } catch { /* serveur hors ligne, on ignore */ }
+}
+
+init();
