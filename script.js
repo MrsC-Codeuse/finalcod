@@ -3,7 +3,7 @@
 //  Connexion au backend Node.js via fetch()
 // ============================================================
 
-const API = 'http://localhost:3000/api';
+const API = 'https://finalcod-production.up.railway.app/api';
 let typeRecherche = 'location';
 let tokenJWT = localStorage.getItem('teranga_token') || null;
 
