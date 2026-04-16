@@ -359,63 +359,118 @@ function afficherBiens(biens) {
 //  DÉTAIL D'UN BIEN
 // ════════════════════════════════════════════════════════════
 
+const BIENS_STATIQUES = {
+  1: {
+    id_bien: 1,
+    titre: "Appartement vue sur mer",
+    description: "Magnifique appartement entièrement meublé avec une vue imprenable sur l'océan Atlantique. Situé au cœur de Saly Portudal, à quelques pas de la plage.",
+    nom_ville: "Saly Portudal", quartier: "Bord de mer",
+    surface_m2: 120, nb_chambres: 3, nb_salles_bain: 2,
+    prix_location: 1000000, periode_location: "mois",
+    meuble: 1, piscine: 0, climatisation: 1, parking: 1, wifi: 1,
+    photo: "appartvuesurmer.png", badge: "location"
+  },
+  2: {
+    id_bien: 2,
+    titre: "Villa avec piscine",
+    description: "Somptueuse villa de standing avec piscine privée, jardin tropical et garage. Architecture moderne dans un quartier résidentiel sécurisé de Saly Portudal.",
+    nom_ville: "Saly Portudal", quartier: "Résidentiel",
+    surface_m2: 350, nb_chambres: 5, nb_salles_bain: 4,
+    prix_vente: 85000000,
+    meuble: 0, piscine: 1, climatisation: 1, parking: 1, wifi: 1,
+    photo: "villaavecpiscine.png", badge: "vente"
+  },
+  3: {
+    id_bien: 3,
+    titre: "Appartement vue piscine",
+    description: "Bel appartement meublé avec vue directe sur la piscine de la résidence. Environnement calme et sécurisé à Mbour.",
+    nom_ville: "Mbour", quartier: "Centre",
+    surface_m2: 85, nb_chambres: 2, nb_salles_bain: 1,
+    prix_location: 1200000, periode_location: "mois",
+    meuble: 1, piscine: 1, climatisation: 1, parking: 0, wifi: 1,
+    photo: "appartvuepiscine.png", badge: "location"
+  },
+  4: {
+    id_bien: 4,
+    titre: "Résidence meublée",
+    description: "Spacieuse résidence meublée haut de gamme à Dakar, idéale pour les expatriés et les professionnels en mission.",
+    nom_ville: "Dakar", quartier: "Plateau",
+    surface_m2: 200, nb_chambres: 4, nb_salles_bain: 3,
+    prix_location: 600000, periode_location: "mois",
+    meuble: 1, piscine: 0, climatisation: 1, parking: 1, wifi: 1,
+    photo: "residence.png", badge: "location"
+  },
+  5: {
+    id_bien: 5,
+    titre: "Villa à vendre",
+    description: "Magnifique villa de prestige à vendre à Dakar dans un quartier résidentiel prisé. Grandes surfaces, belle architecture et parking sécurisé.",
+    nom_ville: "Dakar", quartier: "Almadies",
+    surface_m2: 280, nb_chambres: 4, nb_salles_bain: 3,
+    prix_vente: 200000000,
+    meuble: 0, piscine: 0, climatisation: 1, parking: 1, wifi: 0,
+    photo: "villaavendre.png", badge: "vente"
+  },
+  6: {
+    id_bien: 6,
+    titre: "Appartement non meublé",
+    description: "Appartement non meublé lumineux et bien situé à Dakar. Idéal pour une installation à long terme, proche commerces et transports.",
+    nom_ville: "Dakar", quartier: "Mermoz",
+    surface_m2: 75, nb_chambres: 2, nb_salles_bain: 1,
+    prix_location: 1200000, periode_location: "mois",
+    meuble: 0, piscine: 0, climatisation: 0, parking: 0, wifi: 0,
+    photo: "appartnonmeuble.png", badge: "location"
+  }
+};
+
 async function voirBien(id) {
   ouvrirModal('modal-bien');
-  document.getElementById('modal-bien-content').innerHTML = `
-    <div style="text-align:center;padding:3rem;color:var(--gris-texte)">Chargement...</div>`;
-
-  try {
-    const res = await fetch(`${API}/biens/${id}`);
-    const b   = await res.json();
-
-    const prix = b.prix_vente
-      ? `${Number(b.prix_vente).toLocaleString('fr-FR')} FCFA`
-      : `${Number(b.prix_location).toLocaleString('fr-FR')} FCFA/${b.periode_location || 'mois'}`;
-
-    const photos = b.photos && b.photos.length > 0
-      ? b.photos.map(p => `<img src="${p.url_photo}" alt="${b.titre}" style="width:100%;height:200px;object-fit:cover;border-radius:8px;"/>`).join('')
-      : `<img src="appartnonmeuble.png" alt="${b.titre}" style="width:100%;height:260px;object-fit:cover;border-radius:12px;"/>`;
-
-    document.getElementById('modal-bien-content').innerHTML = `
-      <div>
-        <div style="margin-bottom:1.5rem">${photos}</div>
-        <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
-          <div>
-            <p style="font-size:0.8rem;color:var(--gris-texte);margin-bottom:0.3rem">
-              📍 ${b.nom_ville || ''} ${b.quartier ? '· ' + b.quartier : ''}
-            </p>
-            <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:600">${b.titre}</h2>
-          </div>
-          <div style="text-align:right">
-            <div style="font-family:var(--font-display);font-size:1.6rem;color:var(--vert);font-weight:600">${prix}</div>
-          </div>
-        </div>
-        <p style="color:var(--gris-texte);line-height:1.7;margin-bottom:1.5rem">${b.description || ''}</p>
-        <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-bottom:2rem">
-          ${b.nb_chambres    ? `<span class="card-features span">🛏 ${b.nb_chambres} chambre(s)</span>` : ''}
-          ${b.nb_salles_bain ? `<span class="card-features span">🚿 ${b.nb_salles_bain} salle(s) de bain</span>` : ''}
-          ${b.surface_m2     ? `<span class="card-features span">📐 ${b.surface_m2} m²</span>` : ''}
-          ${b.meuble         ? `<span class="card-features span">🛋️ Meublé</span>` : ''}
-          ${b.piscine        ? `<span class="card-features span">🏊 Piscine</span>` : ''}
-          ${b.climatisation  ? `<span class="card-features span">❄️ Climatisé</span>` : ''}
-          ${b.parking        ? `<span class="card-features span">🚗 Parking</span>` : ''}
-          ${b.wifi           ? `<span class="card-features span">📶 Wi-Fi</span>` : ''}
-        </div>
-        ${b.agent ? `
-          <div style="background:var(--gris-clair);padding:1rem;border-radius:var(--radius);margin-bottom:1.5rem">
-            <p style="font-size:0.85rem;color:var(--gris-texte)">Agent responsable</p>
-            <p style="font-weight:600">${b.agent}</p>
-            ${b.tel_agent ? `<p style="font-size:0.9rem">${b.tel_agent}</p>` : ''}
-          </div>` : ''}
-        <button class="btn-submit" onclick="demanderVisite(${b.id_bien})">
-          Demander une visite
-        </button>
-      </div>`;
-
-  } catch {
+  const b = BIENS_STATIQUES[id];
+  if (!b) {
     document.getElementById('modal-bien-content').innerHTML =
-      '<p style="padding:2rem;color:var(--rouge)">Impossible de charger ce bien.</p>';
+      '<p style="padding:2rem;color:var(--rouge)">Bien introuvable.</p>';
+    return;
   }
+  const prix = b.prix_vente
+    ? `${Number(b.prix_vente).toLocaleString('fr-FR')} FCFA`
+    : `${Number(b.prix_location).toLocaleString('fr-FR')} FCFA/${b.periode_location || 'mois'}`;
+  const badgeLabel = b.badge === 'vente' ? 'Vente' : 'Location';
+  document.getElementById('modal-bien-content').innerHTML = `
+    <div>
+      <div style="position:relative;margin-bottom:1.5rem">
+        <img src="${b.photo}" alt="${b.titre}" 
+             style="width:100%;height:260px;object-fit:cover;border-radius:12px;"
+             onerror="this.src='appartnonmeuble.png'"/>
+        <span class="card-badge ${b.badge}" style="position:absolute;top:1rem;left:1rem">${badgeLabel}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+        <div>
+          <p style="font-size:0.8rem;color:var(--gris-texte);margin-bottom:0.3rem">📍 ${b.nom_ville} ${b.quartier ? '· ' + b.quartier : ''}</p>
+          <h2 style="font-family:var(--font-display);font-size:1.6rem;font-weight:600">${b.titre}</h2>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:var(--font-display);font-size:1.4rem;color:var(--vert);font-weight:600">${prix}</div>
+        </div>
+      </div>
+      <p style="color:var(--gris-texte);line-height:1.7;margin-bottom:1.5rem">${b.description}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-bottom:2rem">
+        ${b.nb_chambres    ? `<span style="background:var(--gris-clair);padding:0.4rem 0.8rem;border-radius:20px;font-size:0.85rem">🛏 ${b.nb_chambres} chambre(s)</span>` : ''}
+        ${b.nb_salles_bain ? `<span style="background:var(--gris-clair);padding:0.4rem 0.8rem;border-radius:20px;font-size:0.85rem">🚿 ${b.nb_salles_bain} salle(s) de bain</span>` : ''}
+        ${b.surface_m2     ? `<span style="background:var(--gris-clair);padding:0.4rem 0.8rem;border-radius:20px;font-size:0.85rem">📐 ${b.surface_m2} m²</span>` : ''}
+        ${b.meuble         ? `<span style="background:var(--gris-clair);padding:0.4rem 0.8rem;border-radius:20px;font-size:0.85rem">🛋️ Meublé</span>` : ''}
+        ${b.piscine        ? `<span style="background:var(--gris-clair);padding:0.4rem 0.8rem;border-radius:20px;font-size:0.85rem">🏊 Piscine</span>` : ''}
+        ${b.climatisation  ? `<span style="background:var(--gris-clair);padding:0.4rem 0.8rem;border-radius:20px;font-size:0.85rem">❄️ Climatisé</span>` : ''}
+        ${b.parking        ? `<span style="background:var(--gris-clair);padding:0.4rem 0.8rem;border-radius:20px;font-size:0.85rem">🚗 Parking</span>` : ''}
+        ${b.wifi           ? `<span style="background:var(--gris-clair);padding:0.4rem 0.8rem;border-radius:20px;font-size:0.85rem">📶 Wi-Fi</span>` : ''}
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap">
+        <button class="btn-submit" onclick="demanderVisite(${b.id_bien})" style="flex:1">📅 Demander une visite</button>
+        <a href="https://wa.me/221781733682?text=Bonjour%2C+je+suis+intéressé(e)+par+*${encodeURIComponent(b.titre)}*+à+${encodeURIComponent(b.nom_ville)}" 
+           target="_blank"
+           style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.5rem;background:#25D366;color:white;border-radius:var(--radius);padding:0.9rem;text-decoration:none;font-weight:500">
+          💬 WhatsApp
+        </a>
+      </div>
+    </div>`;
 }
 
 // ════════════════════════════════════════════════════════════
