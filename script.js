@@ -3,7 +3,7 @@
 //  Connexion au backend Node.js via fetch()
 // ============================================================
 
-const API = 'https://finalcod-production.up.railway.app/api';
+const API = 'http://localhost:3000/api';
 let typeRecherche = 'location';
 let tokenJWT = localStorage.getItem('teranga_token') || null;
 
@@ -250,6 +250,8 @@ async function rechercherBiens() {
   const chambres  = document.getElementById('filtre-chambres').value;
   const meuble    = document.getElementById('filtre-meuble').checked ? '1' : '';
   const piscine   = document.getElementById('filtre-piscine').checked ? '1' : '';
+  const vue_mer   = document.getElementById('filtre-vue-mer').checked ? '1' : '';
+  const prestige  = document.getElementById('filtre-prestige').checked ? '1' : '';
 
   const params = new URLSearchParams();
   params.append('type', typeRecherche);
@@ -259,6 +261,8 @@ async function rechercherBiens() {
   if (chambres)  params.append('chambres', chambres);
   if (meuble)    params.append('meuble', meuble);
   if (piscine)   params.append('piscine', piscine);
+  if (vue_mer)   params.append('vue_mer', vue_mer);
+  if (prestige)  params.append('prestige', prestige);
 
   scrollVers('#biens');
 
@@ -415,7 +419,7 @@ async function toggleFavori(btn, idBien) {
 //  DEMANDE DE VISITE
 // ════════════════════════════════════════════════════════════
 
-function demanderVisite(idBien) {
+function demanderVisite(_idBien) {
   fermerModal('modal-bien');
   setTimeout(() => {
     document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });

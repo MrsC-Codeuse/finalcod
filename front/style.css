@@ -535,6 +535,100 @@ body.menu-ouvert::before {
 .form-success { display: none; margin-top: 1rem; padding: 0.75rem 1rem; background: var(--vert-light); color: var(--vert); border-radius: var(--radius); font-size: 0.9rem; text-align: center; }
 
 /* ════════════════════════════════════════════════════════════
+   TÉMOIGNAGES
+════════════════════════════════════════════════════════════ */
+.temoignages { padding: 6rem 0; background: var(--gris-clair); }
+.temoignages-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.temoignage-card {
+  background: var(--blanc);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gris-mid);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.temoignage-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.temoignage-card::before {
+  content: '"';
+  font-family: var(--font-display);
+  font-size: 6rem;
+  color: var(--vert);
+  opacity: 0.12;
+  position: absolute;
+  top: -0.5rem; left: 1.25rem;
+  line-height: 1;
+  pointer-events: none;
+}
+.temoignage-stars { color: var(--or); font-size: 1rem; margin-bottom: 1rem; letter-spacing: 0.1em; }
+.temoignage-texte { color: var(--gris-texte); line-height: 1.75; margin-bottom: 1.5rem; font-style: italic; font-size: 0.95rem; }
+.temoignage-auteur { display: flex; align-items: center; gap: 0.75rem; }
+.auteur-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--vert-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 600; color: var(--vert);
+  flex-shrink: 0;
+}
+.auteur-info strong { display: block; font-size: 0.9rem; font-weight: 600; color: var(--noir); }
+.auteur-info span { font-size: 0.8rem; color: var(--gris-texte); }
+
+/* ════════════════════════════════════════════════════════════
+   ESTIMATION CTA
+════════════════════════════════════════════════════════════ */
+.estimation-cta { padding: 5rem 0; background: var(--vert); }
+.estimation-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+.estimation-text h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 400;
+  color: var(--blanc);
+  margin-bottom: 0.5rem;
+}
+.estimation-text p { color: rgba(255,255,255,0.8); font-size: 0.95rem; }
+.btn-estimation {
+  background: var(--blanc);
+  color: var(--vert);
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all var(--transition);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+.btn-estimation:hover { background: var(--gris-clair); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+
+/* ════════════════════════════════════════════════════════════
+   FOOTER — RÉSEAUX SOCIAUX
+════════════════════════════════════════════════════════════ */
+.footer-social { display: flex; gap: 0.6rem; margin-top: 1.25rem; }
+.social-link {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition), transform var(--transition);
+  flex-shrink: 0;
+}
+.social-link svg { width: 15px; height: 15px; fill: rgba(255,255,255,0.55); transition: fill var(--transition); }
+.social-link:hover { background: var(--vert); transform: translateY(-2px); }
+.social-link:hover svg { fill: var(--blanc); }
+
+/* ════════════════════════════════════════════════════════════
    FOOTER
 ════════════════════════════════════════════════════════════ */
 .footer { background: var(--noir); padding: 4rem 0 0; }
@@ -617,6 +711,9 @@ body.menu-ouvert::before {
   .apropos-img-wrap img { height: 380px; }
   .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
   .search-filters { grid-template-columns: 1fr 1fr; }
+  .temoignages-grid { grid-template-columns: 1fr 1fr; }
+  .estimation-inner { flex-direction: column; text-align: center; }
+  .estimation-inner .btn-estimation { width: 100%; max-width: 380px; }
 }
 
 /* ── Mobile / Tablette : burger à 900px ─────────────────── */
@@ -696,6 +793,9 @@ body.menu-ouvert::before {
 
   /* Biens : 1 colonne */
   .biens-grid { grid-template-columns: 1fr; }
+
+  /* Témoignages : 1 colonne */
+  .temoignages-grid { grid-template-columns: 1fr; }
 
   /* Footer */
   .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
