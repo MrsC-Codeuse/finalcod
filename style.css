@@ -579,12 +579,7 @@ textarea { resize: vertical; }
 /* ════════════════════════════════════════════════════════════
    RESPONSIVE
 ════════════════════════════════════════════════════════════ */
-@media (max-width: 1024px) {
-  .apropos-inner { grid-template-columns: 1fr; gap: 3rem; }
-  .apropos-img-wrap img { height: 380px; }
-  .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
-  .footer-inner { grid-template-columns: 1fr 1fr; }
-}
+
 @media (max-width: 1200px) {
   .nav-links, .nav-actions { display: none; }
   .burger { display: flex; }
@@ -596,7 +591,12 @@ textarea { resize: vertical; }
   .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
   .hero-scroll { display: none; }
   .apropos-badge { bottom: -1rem; right: 0.5rem; }
+  .apropos-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .apropos-img-wrap img { height: 380px; }
+  .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
 }
+
 @media (max-width: 480px) {
   .search-filters { grid-template-columns: 1fr; }
   .hero-cta { flex-direction: column; }
