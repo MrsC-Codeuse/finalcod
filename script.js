@@ -38,11 +38,24 @@ window.addEventListener('scroll', () => {
 });
 
 function toggleMenu() {
-  const links = document.querySelector('.nav-links');
+  const burger  = document.getElementById('burger');
+  const links   = document.querySelector('.nav-links');
   const actions = document.querySelector('.nav-actions');
-  if (links) links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
-  if (actions) actions.style.display = actions.style.display === 'flex' ? 'none' : 'flex';
+  if (links)   links.classList.toggle('open');
+  if (actions) actions.classList.toggle('open');
+  if (burger)  burger.classList.toggle('open');
+  document.body.classList.toggle('menu-ouvert');
 }
+
+// Fermer le menu au clic sur un lien
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.querySelector('.nav-links')?.classList.remove('open');
+    document.querySelector('.nav-actions')?.classList.remove('open');
+    document.getElementById('burger')?.classList.remove('open');
+    document.body.classList.remove('menu-ouvert');
+  });
+});
 
 // ════════════════════════════════════════════════════════════
 //  COMPTEUR ANIMÉ (hero stats)
@@ -425,7 +438,14 @@ async function envoyerDemande(event) {
 // ════════════════════════════════════════════════════════════
 
 async function chargerPlusBiens() {
-  afficherToast('Connectez-vous pour voir tous les biens disponibles.');
+  try {
+    const res  = await fetch(`${API}/biens?limite=12`);
+    const data = await res.json();
+    afficherBiens(data.biens || []);
+    afficherToast(`${data.total} biens chargés depuis la base de données`);
+  } catch {
+    afficherToast('Impossible de charger les biens. Vérifiez que l\'API est démarrée.');
+  }
 }
 
 // ════════════════════════════════════════════════════════════
