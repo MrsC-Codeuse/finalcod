@@ -16,13 +16,13 @@
         <img src="logo.png" alt="Teranga Immo" class="logo-img"/>
         <span>Teranga Immo</span>
       </a>
-      <ul class="nav-links" id="nav-links">
+      <ul class="nav-links">
         <li><a href="#biens">Nos Biens</a></li>
         <li><a href="#recherche">Rechercher</a></li>
         <li><a href="#apropos">À Propos</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
-      <div class="nav-actions" id="nav-actions">
+      <div class="nav-actions">
         <button class="btn-outline" onclick="ouvrirModal('modal-connexion')">Connexion</button>
         <button class="btn-primary" onclick="ouvrirModal('modal-inscription')">S'inscrire</button>
       </div>
@@ -205,7 +205,7 @@
               <span>📐 200 m²</span>
             </div>
             <div class="card-footer">
-              <div class="card-prix">850 000 <small>FCFA/mois</small></div>
+              <div class="card-prix">600 000 <small>FCFA/mois</small></div>
               <button class="btn-card" onclick="voirBien(4)">Voir</button>
             </div>
           </div>
@@ -389,7 +389,6 @@
     </div>
   </footer>
 
-  <!-- Modals -->
   <div class="modal-overlay" id="modal-connexion" onclick="fermerModalOverlay(event, 'modal-connexion')">
     <div class="modal">
       <button class="modal-close" onclick="fermerModal('modal-connexion')">✕</button>
