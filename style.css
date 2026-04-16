@@ -229,6 +229,7 @@ textarea { resize: vertical; }
 .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 body.menu-ouvert { overflow: hidden; }
+body.menu-ouvert .whatsapp-btn { display: none; }
 
 /* Fond sombre derrière le drawer mobile */
 body.menu-ouvert::before {
