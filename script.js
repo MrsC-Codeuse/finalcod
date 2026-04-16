@@ -47,34 +47,26 @@ function fermerMenu() {
 }
 
 function toggleMenu() {
-  const links = document.querySelector('.nav-links');
+  const burger  = document.getElementById('burger');
+  const links   = document.querySelector('.nav-links');
   const actions = document.querySelector('.nav-actions');
-  
-  if (links.style.display === 'flex') {
-    links.style.display = 'none';
-    actions.style.display = 'none';
-  } else {
-    links.style.display = 'flex';
-    links.style.flexDirection = 'column';
-    links.style.position = 'absolute';
-    links.style.top = '70px';
-    links.style.left = '0';
-    links.style.right = '0';
-    links.style.background = 'white';
-    links.style.padding = '1rem 1.5rem';
-    links.style.zIndex = '999';
-    links.style.boxShadow = '0 8px 32px rgba(0,0,0,0.1)';
-    actions.style.display = 'flex';
-    actions.style.position = 'absolute';
-    actions.style.top = '220px';
-    actions.style.left = '0';
-    actions.style.right = '0';
-    actions.style.background = 'white';
-    actions.style.padding = '1rem 1.5rem';
-    actions.style.zIndex = '999';
-    actions.style.flexDirection = 'column';
-    actions.style.gap = '0.75rem';
+
+  if (links?.classList.contains('open')) {
+    fermerMenu();
+    return;
   }
+
+  // Injecter les boutons Connexion / S'inscrire en bas du drawer
+  if (links && actions && !links.querySelector('.mobile-nav-actions')) {
+    const li = document.createElement('li');
+    li.className = 'mobile-nav-actions';
+    li.innerHTML = actions.innerHTML;
+    links.appendChild(li);
+  }
+
+  links?.classList.add('open');
+  burger?.classList.add('open');
+  document.body.classList.add('menu-ouvert');
 }
 
 // Fermer au clic sur un lien de navigation
