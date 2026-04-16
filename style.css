@@ -585,7 +585,7 @@ textarea { resize: vertical; }
   .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
   .footer-inner { grid-template-columns: 1fr 1fr; }
 }
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .nav-links, .nav-actions { display: none; }
   .burger { display: flex; }
   .hero-title { font-size: clamp(2.2rem, 8vw, 3.5rem); }
