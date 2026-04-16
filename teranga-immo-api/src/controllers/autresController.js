@@ -45,7 +45,7 @@ const listerDemandes = async (req, res) => {
     const [rows] = await db.query(
       `SELECT d.*, b.titre AS bien_titre
        FROM demandes d
-       JOIN biens b ON d.id_bien = b.id_bien
+       LEFT JOIN biens b ON d.id_bien = b.id_bien
        ${where}
        ORDER BY d.date_creation DESC`,
       params

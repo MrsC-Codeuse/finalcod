@@ -3,7 +3,9 @@
 //  Connexion au backend Node.js via fetch()
 // ============================================================
 
-const API = 'http://localhost:3000/api';
+const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'http://localhost:3000/api'
+  : 'https://teranga-immo-api.onrender.com/api';  // ← remplacez par votre URL de production
 let typeRecherche = 'location';
 let tokenJWT = localStorage.getItem('teranga_token') || null;
 
@@ -466,7 +468,7 @@ async function envoyerDemande(event) {
   successEl.style.display = 'none';
 
   const body = {
-    id_bien:       1,
+    id_bien:       null,
     nom_contact:   document.getElementById('c-nom').value.trim(),
     email_contact: document.getElementById('c-email').value.trim(),
     tel_contact:   document.getElementById('c-tel').value.trim(),

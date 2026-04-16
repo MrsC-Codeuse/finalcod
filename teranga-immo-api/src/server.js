@@ -9,7 +9,19 @@ const path    = require('path');
 const app = express();
 
 // ── Middleware globaux ──────────────────────────────────────
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    'http://localhost:3000',
+    'http://localhost',
+    'null',
+    process.env.FRONTEND_URL || 'https://mrsc-codeuse.github.io'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
