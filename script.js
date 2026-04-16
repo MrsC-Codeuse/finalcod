@@ -18,8 +18,8 @@ function afficherToast(message, duree = 3000) {
   setTimeout(() => t.classList.remove('show'), duree);
 }
 
-function scrollTo(cible) {
-  document.querySelector(cible).scrollIntoView({ behavior: 'smooth' });
+function scrollVers(cible) {
+  document.querySelector(cible)?.scrollIntoView({ behavior: 'smooth' });
 }
 
 function headersAuth() {
@@ -111,6 +111,7 @@ window.addEventListener('load', () => {
 // ════════════════════════════════════════════════════════════
 
 function ouvrirModal(id) {
+  fermerMenu();
   document.getElementById(id).classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -259,7 +260,7 @@ async function rechercherBiens() {
   if (meuble)    params.append('meuble', meuble);
   if (piscine)   params.append('piscine', piscine);
 
-  scrollTo('#biens');
+  scrollVers('#biens');
 
   try {
     const res  = await fetch(`${API}/biens?${params.toString()}`);
@@ -294,13 +295,13 @@ function afficherBiens(biens) {
     const badge = b.prix_vente ? 'vente' : 'location';
     const photo = b.photo_principale
       ? b.photo_principale
-      : `imageprojetperso/appartnonmeuble.png`;
+      : `appartnonmeuble.png`;
 
     return `
       <article class="bien-card" style="animation-delay:${i * 0.08}s" data-id="${b.id_bien}">
         <div class="card-img-wrap">
           <img src="${photo}" alt="${b.titre}" loading="lazy"
-               onerror="this.src='imageprojetperso/appartnonmeuble.png'"/>
+               onerror="this.src='appartnonmeuble.png'"/>
           <span class="card-badge ${badge}">${badge === 'vente' ? 'Vente' : 'Location'}</span>
           <button class="card-fav" onclick="toggleFavori(this, ${b.id_bien})" title="Favoris">♡</button>
         </div>
@@ -340,7 +341,7 @@ async function voirBien(id) {
 
     const photos = b.photos && b.photos.length > 0
       ? b.photos.map(p => `<img src="${p.url_photo}" alt="${b.titre}" style="width:100%;height:200px;object-fit:cover;border-radius:8px;"/>`).join('')
-      : `<img src="imageprojetperso/appartnonmeuble.png" alt="${b.titre}" style="width:100%;height:260px;object-fit:cover;border-radius:12px;"/>`;
+      : `<img src="appartnonmeuble.png" alt="${b.titre}" style="width:100%;height:260px;object-fit:cover;border-radius:12px;"/>`;
 
     document.getElementById('modal-bien-content').innerHTML = `
       <div>
