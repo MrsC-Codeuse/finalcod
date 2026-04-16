@@ -679,14 +679,14 @@ body.menu-ouvert::before {
     font-family: var(--font-body);
   }
   .mobile-nav-actions .btn-outline {
-    background: transparent;
-    color: var(--noir);
-    border: 1.5px solid var(--gris-mid);
+    background: transparent !important;
+    color: var(--noir) !important;
+    border: 1.5px solid var(--gris-mid) !important;
   }
   .mobile-nav-actions .btn-primary {
-    background: var(--vert);
-    color: var(--blanc);
-    border: none;
+    background: var(--vert) !important;
+    color: var(--blanc) !important;
+    border: none !important;
   }
 
   /* Hero */
