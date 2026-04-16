@@ -1,5 +1,2 @@
-[phases.build]
-cmds = ["cd teranga-immo-api && npm install"]
-
 [start]
-cmd = "cd teranga-immo-api && npm start"
+cmd = "node source/server.js"
