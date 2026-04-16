@@ -37,39 +37,50 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 50);
 });
 
+function fermerMenu() {
+  const links  = document.querySelector('.nav-links');
+  const burger = document.getElementById('burger');
+  links?.querySelector('.mobile-nav-actions')?.remove();
+  links?.classList.remove('open');
+  burger?.classList.remove('open');
+  document.body.classList.remove('menu-ouvert');
+}
+
 function toggleMenu() {
   const burger  = document.getElementById('burger');
   const links   = document.querySelector('.nav-links');
   const actions = document.querySelector('.nav-actions');
-  if (links)   links.classList.toggle('open');
-  if (actions) actions.classList.toggle('open');
-  if (burger)  burger.classList.toggle('open');
-  document.body.classList.toggle('menu-ouvert');
+
+  if (links?.classList.contains('open')) {
+    fermerMenu();
+    return;
+  }
+
+  // Injecter les boutons Connexion / S'inscrire en bas du drawer
+  if (links && actions && !links.querySelector('.mobile-nav-actions')) {
+    const li = document.createElement('li');
+    li.className = 'mobile-nav-actions';
+    li.innerHTML = actions.innerHTML;
+    links.appendChild(li);
+  }
+
+  links?.classList.add('open');
+  burger?.classList.add('open');
+  document.body.classList.add('menu-ouvert');
 }
 
-function fermerMenu() {
-  document.querySelector('.nav-links')?.classList.remove('open');
-  document.querySelector('.nav-actions')?.classList.remove('open');
-  document.getElementById('burger')?.classList.remove('open');
-  document.body.classList.remove('menu-ouvert');
-}
-
-// Fermer le menu au clic sur un lien
+// Fermer au clic sur un lien de navigation
 document.querySelectorAll('.nav-links a').forEach(a => {
   a.addEventListener('click', fermerMenu);
 });
 
-// Fermer le menu en cliquant sur le fond sombre
+// Fermer en cliquant sur le fond sombre (hors du drawer)
 document.addEventListener('click', e => {
-  if (document.body.classList.contains('menu-ouvert')) {
-    const drawer     = document.querySelector('.nav-links.open');
-    const drawerBtns = document.querySelector('.nav-actions.open');
-    const burger     = document.getElementById('burger');
-    if (drawer && !drawer.contains(e.target) &&
-        (!drawerBtns || !drawerBtns.contains(e.target)) &&
-        (!burger || !burger.contains(e.target))) {
-      fermerMenu();
-    }
+  if (!document.body.classList.contains('menu-ouvert')) return;
+  const drawer = document.querySelector('.nav-links.open');
+  const burger = document.getElementById('burger');
+  if (drawer && !drawer.contains(e.target) && !burger?.contains(e.target)) {
+    fermerMenu();
   }
 });
 
