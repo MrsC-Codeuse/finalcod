@@ -38,7 +38,8 @@ function activerFiltre(type) {
     'meuble':   'filtre-meuble',
     'vue-mer':  'filtre-vue-mer',
     'piscine':  'filtre-piscine',
-    'securise': 'filtre-securise'
+    'securise':   'filtre-securise',
+    'non-meuble': 'filtre-non-meuble'
   };
   const id = map[type];
   if (id) {
@@ -276,8 +277,9 @@ async function rechercherBiens() {
   const chambres  = document.getElementById('filtre-chambres').value;
   const meuble    = document.getElementById('filtre-meuble').checked ? '1' : '';
   const piscine   = document.getElementById('filtre-piscine').checked ? '1' : '';
-  const vue_mer   = document.getElementById('filtre-vue-mer').checked ? '1' : '';
-  const prestige  = document.getElementById('filtre-prestige').checked ? '1' : '';
+  const vue_mer    = document.getElementById('filtre-vue-mer').checked ? '1' : '';
+  const non_meuble = document.getElementById('filtre-non-meuble').checked ? '1' : '';
+  const prestige   = document.getElementById('filtre-prestige').checked ? '1' : '';
 
   const params = new URLSearchParams();
   params.append('type', typeRecherche);
@@ -287,8 +289,9 @@ async function rechercherBiens() {
   if (chambres)  params.append('chambres', chambres);
   if (meuble)    params.append('meuble', meuble);
   if (piscine)   params.append('piscine', piscine);
-  if (vue_mer)   params.append('vue_mer', vue_mer);
-  if (prestige)  params.append('prestige', prestige);
+  if (vue_mer)     params.append('vue_mer', vue_mer);
+  if (non_meuble)  params.append('non_meuble', non_meuble);
+  if (prestige)    params.append('prestige', prestige);
 
   scrollVers('#biens');
 
