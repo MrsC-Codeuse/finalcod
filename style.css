@@ -230,6 +230,20 @@ textarea { resize: vertical; }
 
 body.menu-ouvert { overflow: hidden; }
 
+/* Fond sombre derrière le drawer mobile */
+body.menu-ouvert::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 999;
+  animation: fadeIn 0.25s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* ════════════════════════════════════════════════════════════
    HERO
 ════════════════════════════════════════════════════════════ */
@@ -610,20 +624,18 @@ body.menu-ouvert { overflow: hidden; }
   .nav-links, .nav-actions { display: none; }
   .burger { display: flex; }
 
-  /* ─ Drawer menu mobile ─ */
+  /* ─ Drawer menu mobile : panel unique ─ */
   .nav-links.open {
     display: flex;
     flex-direction: column;
     position: fixed;
     top: 0; right: 0;
-    width: min(280px, 80vw);
-    height: 100%;
-    background: rgba(255,255,255,0.98);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 5.5rem 1.75rem 2rem;
+    width: min(300px, 82vw);
+    height: 100vh;
+    background: #fff;
+    padding: 5rem 1.75rem 10rem;   /* espace bas pour les boutons */
     z-index: 1000;
-    box-shadow: -4px 0 32px rgba(0,0,0,0.12);
+    box-shadow: -6px 0 40px rgba(0,0,0,0.13);
     gap: 0;
     animation: slideMenuIn 0.28s ease;
     overflow-y: auto;
@@ -636,9 +648,9 @@ body.menu-ouvert { overflow: hidden; }
   .nav-links.open li:last-child { border-bottom: none; }
   .nav-links.open a {
     display: block;
-    padding: 1rem 0.25rem;
-    color: var(--gris-texte) !important;
-    font-size: 0.95rem;
+    padding: 1.1rem 0;
+    color: var(--noir) !important;
+    font-size: 1rem;
     font-weight: 500;
     border: none !important;
     background: transparent !important;
@@ -646,22 +658,23 @@ body.menu-ouvert { overflow: hidden; }
   }
   .nav-links.open a:hover { color: var(--vert) !important; }
 
+  /* Boutons collés en bas du même drawer */
   .nav-actions.open {
     display: flex;
     flex-direction: column;
     position: fixed;
-    top: 0; right: 0;
-    width: min(280px, 80vw);
-    height: 100%;
-    padding: 14rem 1.75rem 2rem;
-    z-index: 1000;
+    bottom: 0; right: 0;
+    width: min(300px, 82vw);
+    padding: 1.25rem 1.75rem 1.75rem;
+    z-index: 1001;
     gap: 0.75rem;
-    pointer-events: none;
+    background: #fff;
+    border-top: 1px solid var(--gris-mid);
   }
   .nav-actions.open button {
-    pointer-events: all;
     width: 100%;
     text-align: center;
+    border-radius: 50px;
   }
 
   /* Hero */
