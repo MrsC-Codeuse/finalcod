@@ -139,6 +139,9 @@ textarea { resize: vertical; }
   box-shadow: var(--shadow-sm);
   padding: 0.6rem 0;
 }
+.navbar:not(.scrolled) .nav-links a {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
 .nav-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -599,4 +602,28 @@ textarea { resize: vertical; }
   .hero-cta { flex-direction: column; }
   .btn-hero-primary, .btn-hero-outline { text-align: center; }
   .contact-form-wrap { padding: 1.5rem; }
+}
+/* ── Bouton WhatsApp flottant ─────────────────────────────── */
+.whatsapp-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 9998;
+  background: #25D366;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.4rem;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+.whatsapp-btn:hover {
+  background: #1ebe5d;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(37,211,102,0.5);
 }
