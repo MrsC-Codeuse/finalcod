@@ -1,29 +1,26 @@
 // src/config/db.js
-// Connexion MySQL avec pool de connexions
-
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 const pool = mysql.createPool({
-  host:     process.env.DB_HOST     || 'localhost',
-  port:     process.env.DB_PORT     || 3306,
-  user:     process.env.DB_USER     || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME     || 'teranga_immo',
+  host:     process.env.MYSQLHOST     || 'localhost',
+  port:     process.env.MYSQLPORT     || 3306,
+  user:     process.env.MYSQLUSER     || 'root',
+  password: process.env.MYSQLPASSWORD || '',
+  database: process.env.MYSQLDATABASE || 'railway',
   waitForConnections: true,
-  connectionLimit:    10,
-  queueLimit:         0,
+  connectionLimit: 10,
+  queueLimit: 0,
   timezone: '+00:00',
 });
 
-// Test de connexion au démarrage
 pool.getConnection()
   .then(conn => {
-    console.log('✅  MySQL connecté — base de données : ' + process.env.DB_NAME);
+    console.log('✅ MySQL connecté - base : ' + process.env.MYSQLDATABASE);
     conn.release();
   })
   .catch(err => {
-    console.error('❌  Erreur de connexion MySQL :', err.message);
+    console.error('❌ Erreur MySQL :', err.message);
     process.exit(1);
   });
 
