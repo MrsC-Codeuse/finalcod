@@ -425,14 +425,7 @@ async function envoyerDemande(event) {
 // ════════════════════════════════════════════════════════════
 
 async function chargerPlusBiens() {
-  try {
-    const res  = await fetch(`${API}/biens?limite=12`);
-    const data = await res.json();
-    afficherBiens(data.biens || []);
-    afficherToast(`${data.total} biens chargés depuis la base de données`);
-  } catch {
-    afficherToast('Impossible de charger les biens. Vérifiez que l\'API est démarrée.');
-  }
+  afficherToast('Connectez-vous pour voir tous les biens disponibles.');
 }
 
 // ════════════════════════════════════════════════════════════
