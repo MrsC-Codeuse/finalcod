@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Admin Teranga Immo</title>
+  <link rel="stylesheet" href="../style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body { background: var(--gris-clair); min-height: 100vh; }
+    .admin-nav {
+      background: var(--noir);
+      padding: 0.9rem 0;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: var(--shadow-md);
+    }
+    .admin-nav-inner {
+      max-width: 1300px; margin: 0 auto; padding: 0 1.5rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .admin-logo { display: flex; align-items: center; gap: 0.6rem; color: var(--blanc); font-weight: 600; font-size: 1rem; text-decoration: none; }
+    .admin-logo img { width: 28px; height: 28px; object-fit: contain; border-radius: 6px; }
+    .admin-nav-links { display: flex; gap: 0.25rem; }
+    .admin-nav-links a {
+      color: rgba(255,255,255,0.55);
+      padding: 0.45rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition);
+    }
+    .admin-nav-links a:hover, .admin-nav-links a.active { color: var(--blanc); background: rgba(255,255,255,0.1); }
+    .admin-user { display: flex; align-items: center; gap: 0.75rem; }
+    .admin-user span { color: rgba(255,255,255,0.6); font-size: 0.85rem; }
+    .btn-logout {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7);
+      border: none; padding: 0.4rem 0.9rem;
+      border-radius: 50px; font-size: 0.82rem;
+      cursor: pointer; font-family: var(--font-body);
+      transition: all var(--transition);
+    }
+    .btn-logout:hover { background: rgba(255,255,255,0.15); color: var(--blanc); }
+
+    .admin-container { max-width: 1300px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    .admin-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2.5rem;
+    }
+    .stat-card {
+      background: var(--blanc);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gris-mid);
+    }
+    .stat-card-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gris-texte); font-weight: 500; margin-bottom: 0.5rem; }
+    .stat-card-value { font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: var(--noir); }
+    .stat-card-value.vert { color: var(--vert); }
+
+    .admin-section { background: var(--blanc); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--gris-mid); margin-bottom: 2rem; overflow: hidden; }
+    .admin-section-header {
+      padding: 1.25rem 1.75rem;
+      border-bottom: 1px solid var(--gris-mid);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .admin-section-header h2 { font-size: 1rem; font-weight: 600; color: var(--noir); }
+    .btn-ajouter {
+      background: var(--vert); color: var(--blanc);
+      padding: 0.55rem 1.25rem; border-radius: 50px;
+      border: none; font-size: 0.85rem; font-weight: 500;
+      cursor: pointer; font-family: var(--font-body);
+      transition: background var(--transition);
+      text-decoration: none; display: inline-block;
+    }
+    .btn-ajouter:hover { background: var(--vert-hover); }
+
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th {
+      padding: 0.75rem 1.5rem;
+      text-align: left;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gris-texte);
+      background: var(--gris-clair);
+      border-bottom: 1px solid var(--gris-mid);
+    }
+    .admin-table td {
+      padding: 1rem 1.5rem;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--gris-mid);
+      vertical-align: middle;
+    }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr:hover td { background: var(--gris-clair); }
+    .badge-loc { background: var(--vert-light); color: var(--vert); padding: 0.15rem 0.7rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600; }
+    .badge-ven { background: #FEF3C7; color: #92400E; padding: 0.15rem 0.7rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600; }
+    .table-actions { display: flex; gap: 0.5rem; }
+    .btn-edit { background: var(--gris-clair); color: var(--noir); border: none; padding: 0.35rem 0.85rem; border-radius: 50px; font-size: 0.8rem; cursor: pointer; font-family: var(--font-body); transition: all var(--transition); text-decoration: none; }
+    .btn-edit:hover { background: var(--gris-mid); }
+    .btn-del { background: #FEE2E2; color: var(--rouge); border: none; padding: 0.35rem 0.85rem; border-radius: 50px; font-size: 0.8rem; cursor: pointer; font-family: var(--font-body); transition: all var(--transition); }
+    .btn-del:hover { background: var(--rouge); color: var(--blanc); }
+
+    .msg-unread td:first-child { font-weight: 600; }
+    .msg-badge-new { background: var(--vert); color: var(--blanc); padding: 0.1rem 0.6rem; border-radius: 50px; font-size: 0.7rem; font-weight: 600; margin-left: 0.5rem; }
+
+    .empty-state { padding: 3rem; text-align: center; color: var(--gris-texte); }
+
+    @media (max-width: 900px) {
+      .admin-stats { grid-template-columns: 1fr 1fr; }
+      .admin-nav-links { display: none; }
+      .admin-table { font-size: 0.8rem; }
+      .admin-table th, .admin-table td { padding: 0.6rem 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="admin-nav">
+    <div class="admin-nav-inner">
+      <a href="../index.html" class="admin-logo">
+        <img src="../logo.png" alt="Logo"/>
+        Admin Teranga Immo
+      </a>
+      <div class="admin-nav-links">
+        <a href="dashboard.html" class="active">Annonces</a>
+        <a href="ajouter.html">Ajouter un bien</a>
+        <a href="messages.html">Messages</a>
+        <a href="../index.html" target="_blank">Voir le site</a>
+      </div>
+      <div class="admin-user">
+        <span id="admin-nom">Administrateur</span>
+        <button class="btn-logout" onclick="adminLogout()">Déconnexion</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="admin-container">
+
+    <div class="admin-stats" id="admin-stats">
+      <div class="stat-card"><div class="stat-card-label">Biens actifs</div><div class="stat-card-value vert" id="stat-biens">—</div></div>
+      <div class="stat-card"><div class="stat-card-label">Messages reçus</div><div class="stat-card-value" id="stat-messages">—</div></div>
+      <div class="stat-card"><div class="stat-card-label">Utilisateurs</div><div class="stat-card-value" id="stat-users">—</div></div>
+      <div class="stat-card"><div class="stat-card-label">Réservations</div><div class="stat-card-value" id="stat-resa">—</div></div>
+    </div>
+
+    <div class="admin-section">
+      <div class="admin-section-header">
+        <h2>Liste des annonces</h2>
+        <a href="ajouter.html" class="btn-ajouter">+ Ajouter un bien</a>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Titre</th><th>Ville</th><th>Type</th><th>Prix</th><th>Statut</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="table-biens">
+          <tr><td colspan="7" class="empty-state">Chargement...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script>
+    const API = 'http://localhost:3000/api';
+    const token = localStorage.getItem('teranga_admin_token');
+
+    if (!token) window.location = 'login.html';
+
+    const nom = localStorage.getItem('teranga_admin_nom');
+    if (nom) document.getElementById('admin-nom').textContent = nom;
+
+    function adminLogout() {
+      localStorage.removeItem('teranga_admin_token');
+      localStorage.removeItem('teranga_admin_nom');
+      window.location = 'login.html';
+    }
+
+    function afficherToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    async function chargerBiens() {
+      try {
+        const res  = await fetch(`${API}/biens?limite=100`, { headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await res.json();
+        const biens = data.biens || [];
+        document.getElementById('stat-biens').textContent = biens.length;
+
+        if (biens.length === 0) {
+          document.getElementById('table-biens').innerHTML = '<tr><td colspan="7" class="empty-state">Aucun bien enregistré.</td></tr>';
+          return;
+        }
+        document.getElementById('table-biens').innerHTML = biens.map(b => {
+          const prix = b.prix_vente
+            ? `${Number(b.prix_vente).toLocaleString('fr-FR')} FCFA`
+            : `${Number(b.prix_location).toLocaleString('fr-FR')} FCFA/mois`;
+          const badge = b.prix_vente
+            ? '<span class="badge-ven">Vente</span>'
+            : '<span class="badge-loc">Location</span>';
+          return `
+            <tr>
+              <td style="color:var(--gris-texte);font-size:0.8rem">#${b.id_bien}</td>
+              <td><strong>${b.titre}</strong></td>
+              <td>${b.nom_ville || '—'}</td>
+              <td>${badge}</td>
+              <td>${prix}</td>
+              <td><span class="badge-loc">Actif</span></td>
+              <td>
+                <div class="table-actions">
+                  <a href="modifier.html?id=${b.id_bien}" class="btn-edit">Modifier</a>
+                  <button class="btn-del" onclick="supprimerBien(${b.id_bien})">Supprimer</button>
+                </div>
+              </td>
+            </tr>`;
+        }).join('');
+      } catch {
+        document.getElementById('table-biens').innerHTML = '<tr><td colspan="7" class="empty-state">Impossible de charger les annonces (API hors ligne).</td></tr>';
+      }
+    }
+
+    async function chargerStats() {
+      try {
+        const res  = await fetch(`${API}/demandes`, { headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await res.json();
+        document.getElementById('stat-messages').textContent = data.total || (data.demandes?.length || 0);
+        document.getElementById('stat-resa').textContent     = data.demandes?.filter(d => d.type_demande === 'visite' || d.type_demande === 'location').length || '—';
+      } catch {
+        document.getElementById('stat-messages').textContent = '—';
+      }
+    }
+
+    async function supprimerBien(id) {
+      if (!confirm(`Supprimer le bien #${id} ? Cette action est irréversible.`)) return;
+      try {
+        const res = await fetch(`${API}/biens/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (res.ok) { afficherToast('✅ Bien supprimé.'); chargerBiens(); }
+        else afficherToast('Erreur lors de la suppression.');
+      } catch { afficherToast('Erreur réseau.'); }
+    }
+
+    chargerBiens();
+    chargerStats();
+  </script>
+</body>
+</html>

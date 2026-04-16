@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ajouter un bien — Admin Teranga Immo</title>
+  <link rel="stylesheet" href="../style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body { background: var(--gris-clair); }
+    .admin-nav { background:var(--noir); padding:0.9rem 0; position:sticky; top:0; z-index:100; }
+    .admin-nav-inner { max-width:1300px; margin:0 auto; padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .admin-logo { display:flex; align-items:center; gap:0.6rem; color:var(--blanc); font-weight:600; font-size:1rem; text-decoration:none; }
+    .admin-logo img { width:28px; height:28px; object-fit:contain; border-radius:6px; }
+    .admin-nav-links { display:flex; gap:0.25rem; }
+    .admin-nav-links a { color:rgba(255,255,255,0.55); padding:0.45rem 1rem; border-radius:50px; font-size:0.85rem; font-weight:500; text-decoration:none; transition:all var(--transition); }
+    .admin-nav-links a:hover,.admin-nav-links a.active { color:var(--blanc); background:rgba(255,255,255,0.1); }
+    .btn-logout { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.7); border:none; padding:0.4rem 0.9rem; border-radius:50px; font-size:0.82rem; cursor:pointer; font-family:var(--font-body); transition:all var(--transition); }
+    .btn-logout:hover { background:rgba(255,255,255,0.15); color:var(--blanc); }
+
+    .admin-container { max-width:900px; margin:0 auto; padding:2rem 1.5rem; }
+    .form-card { background:var(--blanc); border-radius:var(--radius-lg); padding:2.5rem; box-shadow:var(--shadow-sm); border:1px solid var(--gris-mid); }
+    .form-card h2 { font-family:var(--font-display); font-size:1.6rem; font-weight:600; margin-bottom:0.25rem; }
+    .form-card > p { color:var(--gris-texte); font-size:0.88rem; margin-bottom:2rem; }
+    .form-section-title { font-size:0.78rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--gris-texte); margin:2rem 0 1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--gris-mid); }
+    .checkbox-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.75rem; }
+    .checkbox-grid label { display:flex; align-items:center; gap:0.5rem; font-size:0.88rem; cursor:pointer; }
+    .checkbox-grid input { width:auto; }
+    .form-actions { display:flex; gap:1rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn-cancel { background:transparent; color:var(--gris-texte); border:1.5px solid var(--gris-mid); padding:0.8rem 2rem; border-radius:50px; font-size:0.9rem; cursor:pointer; font-family:var(--font-body); text-decoration:none; transition:all var(--transition); }
+    .btn-cancel:hover { border-color:var(--vert); color:var(--vert); }
+    .modal-success { margin-top:1rem; }
+  </style>
+</head>
+<body>
+  <nav class="admin-nav">
+    <div class="admin-nav-inner">
+      <a href="../index.html" class="admin-logo"><img src="../logo.png" alt="Logo"/>Admin Teranga Immo</a>
+      <div class="admin-nav-links">
+        <a href="dashboard.html">Annonces</a>
+        <a href="ajouter.html" class="active">Ajouter un bien</a>
+        <a href="messages.html">Messages</a>
+      </div>
+      <button class="btn-logout" onclick="adminLogout()">Déconnexion</button>
+    </div>
+  </nav>
+
+  <div class="admin-container">
+    <div class="form-card">
+      <h2>Ajouter un nouveau bien</h2>
+      <p>Remplissez les informations du bien à publier sur le site.</p>
+
+      <form onsubmit="ajouterBien(event)">
+        <p class="form-section-title">Informations générales</p>
+        <div class="form-group">
+          <label>Titre de l'annonce *</label>
+          <input type="text" id="b-titre" placeholder="Ex : Villa avec piscine à Saly" required/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ville *</label>
+            <select id="b-ville" required>
+              <option value="">— Choisir —</option>
+              <option value="1">Dakar</option>
+              <option value="2">Saly Portudal</option>
+              <option value="3">Mbour</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Quartier / Zone</label>
+            <input type="text" id="b-quartier" placeholder="Ex : Almadies, Ngor..."/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Type de bien *</label>
+            <select id="b-categorie" required>
+              <option value="">— Choisir —</option>
+              <option value="1">Appartement</option>
+              <option value="2">Villa</option>
+              <option value="3">Studio</option>
+              <option value="4">Chambre d'hôtel</option>
+              <option value="7">Résidence meublée</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Surface (m²)</label>
+            <input type="number" id="b-surface" placeholder="Ex : 120"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="b-desc" rows="4" placeholder="Décrivez le bien en détail..."></textarea>
+        </div>
+
+        <p class="form-section-title">Prix</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prix location (FCFA/mois)</label>
+            <input type="number" id="b-prix-loc" placeholder="Laisser vide si vente uniquement"/>
+          </div>
+          <div class="form-group">
+            <label>Prix vente (FCFA)</label>
+            <input type="number" id="b-prix-ven" placeholder="Laisser vide si location uniquement"/>
+          </div>
+        </div>
+
+        <p class="form-section-title">Caractéristiques</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Chambres</label>
+            <input type="number" id="b-chambres" min="0" placeholder="0"/>
+          </div>
+          <div class="form-group">
+            <label>Salles de bain</label>
+            <input type="number" id="b-sdb" min="0" placeholder="0"/>
+          </div>
+        </div>
+        <p class="form-section-title">Équipements</p>
+        <div class="checkbox-grid">
+          <label><input type="checkbox" id="b-meuble"/> Meublé</label>
+          <label><input type="checkbox" id="b-piscine"/> Piscine</label>
+          <label><input type="checkbox" id="b-clim"/> Climatisation</label>
+          <label><input type="checkbox" id="b-parking"/> Parking</label>
+          <label><input type="checkbox" id="b-wifi"/> Wi-Fi</label>
+          <label><input type="checkbox" id="b-gardien"/> Gardienné</label>
+        </div>
+
+        <p class="form-section-title">Photo principale (URL)</p>
+        <div class="form-group">
+          <input type="text" id="b-photo" placeholder="https://... ou nom-fichier.jpg"/>
+        </div>
+
+        <div class="modal-success" id="ajouter-success"></div>
+        <div class="modal-error" id="ajouter-error" style="margin-top:0.75rem"></div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit" style="width:auto;padding:0.9rem 2.5rem">Publier l'annonce</button>
+          <a href="dashboard.html" class="btn-cancel">Annuler</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script>
+    const API = 'http://localhost:3000/api';
+    const token = localStorage.getItem('teranga_admin_token');
+    if (!token) window.location = 'login.html';
+
+    function adminLogout() {
+      localStorage.removeItem('teranga_admin_token');
+      localStorage.removeItem('teranga_admin_nom');
+      window.location = 'login.html';
+    }
+
+    async function ajouterBien(e) {
+      e.preventDefault();
+      const errEl = document.getElementById('ajouter-error');
+      const okEl  = document.getElementById('ajouter-success');
+      errEl.classList.remove('visible');
+      okEl.classList.remove('visible');
+
+      const body = {
+        titre:          document.getElementById('b-titre').value.trim(),
+        id_ville:       parseInt(document.getElementById('b-ville').value),
+        quartier:       document.getElementById('b-quartier').value.trim(),
+        id_categorie:   parseInt(document.getElementById('b-categorie').value),
+        surface_m2:     parseInt(document.getElementById('b-surface').value) || null,
+        description:    document.getElementById('b-desc').value.trim(),
+        prix_location:  parseInt(document.getElementById('b-prix-loc').value) || null,
+        prix_vente:     parseInt(document.getElementById('b-prix-ven').value) || null,
+        nb_chambres:    parseInt(document.getElementById('b-chambres').value) || null,
+        nb_salles_bain: parseInt(document.getElementById('b-sdb').value) || null,
+        meuble:         document.getElementById('b-meuble').checked ? 1 : 0,
+        piscine:        document.getElementById('b-piscine').checked ? 1 : 0,
+        climatisation:  document.getElementById('b-clim').checked ? 1 : 0,
+        parking:        document.getElementById('b-parking').checked ? 1 : 0,
+        wifi:           document.getElementById('b-wifi').checked ? 1 : 0,
+        photo_principale: document.getElementById('b-photo').value.trim() || null
+      };
+
+      try {
+        const res  = await fetch(`${API}/biens`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errEl.textContent = data.message || 'Erreur lors de l\'ajout.';
+          errEl.classList.add('visible');
+          return;
+        }
+        okEl.textContent = '✅ Bien publié avec succès !';
+        okEl.classList.add('visible');
+        e.target.reset();
+        setTimeout(() => window.location = 'dashboard.html', 1500);
+      } catch {
+        errEl.textContent = 'Erreur réseau. Vérifiez que le serveur est démarré.';
+        errEl.classList.add('visible');
+      }
+    }
+  </script>
+</body>
+</html>

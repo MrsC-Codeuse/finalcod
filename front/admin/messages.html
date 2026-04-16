@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Messages — Admin Teranga Immo</title>
+  <link rel="stylesheet" href="../style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body { background:var(--gris-clair); }
+    .admin-nav { background:var(--noir); padding:0.9rem 0; position:sticky; top:0; z-index:100; }
+    .admin-nav-inner { max-width:1300px; margin:0 auto; padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .admin-logo { display:flex; align-items:center; gap:0.6rem; color:var(--blanc); font-weight:600; font-size:1rem; text-decoration:none; }
+    .admin-logo img { width:28px; height:28px; object-fit:contain; border-radius:6px; }
+    .admin-nav-links { display:flex; gap:0.25rem; }
+    .admin-nav-links a { color:rgba(255,255,255,0.55); padding:0.45rem 1rem; border-radius:50px; font-size:0.85rem; font-weight:500; text-decoration:none; transition:all var(--transition); }
+    .admin-nav-links a:hover,.admin-nav-links a.active { color:var(--blanc); background:rgba(255,255,255,0.1); }
+    .btn-logout { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.7); border:none; padding:0.4rem 0.9rem; border-radius:50px; font-size:0.82rem; cursor:pointer; font-family:var(--font-body); transition:all var(--transition); }
+    .btn-logout:hover { background:rgba(255,255,255,0.15); color:var(--blanc); }
+
+    .admin-container { max-width:1300px; margin:0 auto; padding:2rem 1.5rem; }
+    .admin-section { background:var(--blanc); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); border:1px solid var(--gris-mid); overflow:hidden; }
+    .admin-section-header { padding:1.25rem 1.75rem; border-bottom:1px solid var(--gris-mid); display:flex; align-items:center; justify-content:space-between; }
+    .admin-section-header h2 { font-size:1rem; font-weight:600; }
+
+    .msg-filters { display:flex; gap:0.5rem; padding:1rem 1.75rem; border-bottom:1px solid var(--gris-mid); flex-wrap:wrap; }
+    .msg-filter-btn { padding:0.4rem 1rem; border-radius:50px; border:1.5px solid var(--gris-mid); background:transparent; color:var(--gris-texte); font-size:0.82rem; cursor:pointer; font-family:var(--font-body); transition:all var(--transition); }
+    .msg-filter-btn:hover, .msg-filter-btn.active { background:var(--vert); color:var(--blanc); border-color:var(--vert); }
+
+    .admin-table { width:100%; border-collapse:collapse; }
+    .admin-table th { padding:0.75rem 1.5rem; text-align:left; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gris-texte); background:var(--gris-clair); border-bottom:1px solid var(--gris-mid); }
+    .admin-table td { padding:1rem 1.5rem; font-size:0.88rem; border-bottom:1px solid var(--gris-mid); vertical-align:top; }
+    .admin-table tr:last-child td { border-bottom:none; }
+    .admin-table tr:hover td { background:var(--gris-clair); }
+
+    .msg-type { padding:0.15rem 0.7rem; border-radius:50px; font-size:0.72rem; font-weight:600; }
+    .msg-type.visite { background:#EDE9FE; color:#5B21B6; }
+    .msg-type.location { background:var(--vert-light); color:var(--vert); }
+    .msg-type.renseignement { background:var(--gris-clair); color:var(--gris-texte); }
+    .msg-type.offre_achat { background:#FEF3C7; color:#92400E; }
+
+    .msg-message { color:var(--gris-texte); font-size:0.85rem; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .btn-repondre { background:var(--vert-light); color:var(--vert); border:none; padding:0.35rem 0.85rem; border-radius:50px; font-size:0.8rem; cursor:pointer; font-family:var(--font-body); text-decoration:none; }
+    .btn-repondre:hover { background:var(--vert); color:var(--blanc); }
+    .empty-state { padding:3rem; text-align:center; color:var(--gris-texte); }
+    .msg-date { color:var(--gris-texte); font-size:0.8rem; }
+  </style>
+</head>
+<body>
+  <nav class="admin-nav">
+    <div class="admin-nav-inner">
+      <a href="../index.html" class="admin-logo"><img src="../logo.png" alt="Logo"/>Admin Teranga Immo</a>
+      <div class="admin-nav-links">
+        <a href="dashboard.html">Annonces</a>
+        <a href="ajouter.html">Ajouter un bien</a>
+        <a href="messages.html" class="active">Messages</a>
+      </div>
+      <button class="btn-logout" onclick="adminLogout()">Déconnexion</button>
+    </div>
+  </nav>
+
+  <div class="admin-container">
+    <div class="admin-section">
+      <div class="admin-section-header">
+        <h2>Messages & Réservations reçus</h2>
+        <span id="msg-count" style="font-size:0.85rem;color:var(--gris-texte)"></span>
+      </div>
+      <div class="msg-filters">
+        <button class="msg-filter-btn active" onclick="filtrerMessages('all', this)">Tous</button>
+        <button class="msg-filter-btn" onclick="filtrerMessages('visite', this)">Visites</button>
+        <button class="msg-filter-btn" onclick="filtrerMessages('location', this)">Locations</button>
+        <button class="msg-filter-btn" onclick="filtrerMessages('offre_achat', this)">Offres d'achat</button>
+        <button class="msg-filter-btn" onclick="filtrerMessages('renseignement', this)">Renseignements</button>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr><th>Date</th><th>Nom</th><th>Contact</th><th>Type</th><th>Message</th><th>Action</th></tr>
+        </thead>
+        <tbody id="table-messages">
+          <tr><td colspan="6" class="empty-state">Chargement...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script>
+    const API = 'http://localhost:3000/api';
+    const token = localStorage.getItem('teranga_admin_token');
+    if (!token) window.location = 'login.html';
+
+    let tousMessages = [];
+    let filtreActif = 'all';
+
+    function adminLogout() {
+      localStorage.removeItem('teranga_admin_token');
+      localStorage.removeItem('teranga_admin_nom');
+      window.location = 'login.html';
+    }
+
+    function filtrerMessages(type, btn) {
+      filtreActif = type;
+      document.querySelectorAll('.msg-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      afficherMessages(type === 'all' ? tousMessages : tousMessages.filter(m => m.type_demande === type));
+    }
+
+    function afficherMessages(msgs) {
+      document.getElementById('msg-count').textContent = `${msgs.length} message(s)`;
+      if (msgs.length === 0) {
+        document.getElementById('table-messages').innerHTML = '<tr><td colspan="6" class="empty-state">Aucun message pour ce filtre.</td></tr>';
+        return;
+      }
+      document.getElementById('table-messages').innerHTML = msgs.map(m => {
+        const date = m.date_demande ? new Date(m.date_demande).toLocaleDateString('fr-FR') : '—';
+        const typeClass = m.type_demande || 'renseignement';
+        const typeLabel = { visite:'Visite', location:'Location', offre_achat:'Offre achat', renseignement:'Info' }[typeClass] || typeClass;
+        return `
+          <tr>
+            <td class="msg-date">${date}</td>
+            <td><strong>${m.nom_contact || '—'}</strong></td>
+            <td>
+              ${m.email_contact ? `<a href="mailto:${m.email_contact}" style="color:var(--vert)">${m.email_contact}</a><br/>` : ''}
+              ${m.tel_contact ? `<span style="font-size:0.8rem;color:var(--gris-texte)">${m.tel_contact}</span>` : ''}
+            </td>
+            <td><span class="msg-type ${typeClass}">${typeLabel}</span></td>
+            <td><p class="msg-message" title="${(m.message||'').replace(/"/g,'&quot;')}">${m.message || '—'}</p></td>
+            <td>
+              ${m.email_contact ? `<a href="mailto:${m.email_contact}?subject=Teranga Immo — Réponse à votre demande" class="btn-repondre">Répondre</a>` : '—'}
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    async function chargerMessages() {
+      try {
+        const res  = await fetch(`${API}/demandes`, { headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await res.json();
+        tousMessages = data.demandes || data || [];
+        afficherMessages(tousMessages);
+      } catch {
+        document.getElementById('table-messages').innerHTML = '<tr><td colspan="6" class="empty-state">Impossible de charger les messages (API hors ligne).</td></tr>';
+      }
+    }
+
+    chargerMessages();
+  </script>
+</body>
+</html>

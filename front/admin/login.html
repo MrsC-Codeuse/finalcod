@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Administration — Teranga Immo</title>
+  <link rel="stylesheet" href="../style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body { background: var(--gris-clair); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .login-box {
+      background: var(--blanc);
+      border-radius: var(--radius-lg);
+      padding: 3rem 2.5rem;
+      width: 100%; max-width: 420px;
+      box-shadow: var(--shadow-lg);
+    }
+    .login-logo { display: flex; align-items: center; gap: 0.6rem; justify-content: center; margin-bottom: 2rem; }
+    .login-logo span { font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; color: var(--noir); }
+    .login-logo img { width: 36px; height: 36px; object-fit: contain; border-radius: 8px; }
+    .login-title { text-align: center; font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 0.4rem; }
+    .login-sub { text-align: center; color: var(--gris-texte); font-size: 0.88rem; margin-bottom: 2rem; }
+    .admin-badge {
+      display: inline-block;
+      background: var(--vert-light);
+      color: var(--vert);
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="../logo.png" alt="Logo"/>
+      <span>Teranga Immo</span>
+    </div>
+    <div style="text-align:center"><span class="admin-badge">Administration</span></div>
+    <h1 class="login-title">Connexion</h1>
+    <p class="login-sub">Accès réservé aux administrateurs</p>
+
+    <form onsubmit="adminLogin(event)">
+      <div class="form-group">
+        <label>Email administrateur</label>
+        <input type="email" id="adm-email" placeholder="admin@teranga-immo.sn" required/>
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="adm-mdp" placeholder="••••••••" required/>
+      </div>
+      <div class="modal-error" id="adm-error" style="margin-bottom:0.75rem"></div>
+      <button type="submit" class="btn-submit">Se connecter</button>
+    </form>
+    <p style="text-align:center;margin-top:1.5rem;font-size:0.85rem;color:var(--gris-texte)">
+      <a href="../index.html" style="color:var(--vert)">← Retour au site</a>
+    </p>
+  </div>
+
+  <script>
+    const API = 'http://localhost:3000/api';
+
+    // Rediriger si déjà connecté en admin
+    if (localStorage.getItem('teranga_admin_token')) {
+      window.location = 'dashboard.html';
+    }
+
+    async function adminLogin(e) {
+      e.preventDefault();
+      const errEl = document.getElementById('adm-error');
+      errEl.classList.remove('visible');
+      const body = {
+        email:        document.getElementById('adm-email').value.trim(),
+        mot_de_passe: document.getElementById('adm-mdp').value
+      };
+      try {
+        const res  = await fetch(`${API}/auth/connexion`, {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errEl.textContent = data.message || 'Identifiants incorrects.';
+          errEl.classList.add('visible');
+          return;
+        }
+        if (data.utilisateur?.role !== 'admin') {
+          errEl.textContent = 'Accès refusé. Ce compte n\'est pas administrateur.';
+          errEl.classList.add('visible');
+          return;
+        }
+        localStorage.setItem('teranga_admin_token', data.token);
+        localStorage.setItem('teranga_admin_nom', `${data.utilisateur.prenom} ${data.utilisateur.nom}`);
+        window.location = 'dashboard.html';
+      } catch {
+        errEl.textContent = 'Erreur réseau. Vérifiez que le serveur est démarré.';
+        errEl.classList.add('visible');
+      }
+    }
+  </script>
+</body>
+</html>

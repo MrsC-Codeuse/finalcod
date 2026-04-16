@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Annonces — Teranga Immo</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    .page-hero {
+      background: var(--noir-soft);
+      padding: 7rem 0 3rem;
+      text-align: center;
+    }
+    .page-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 400;
+      color: var(--blanc);
+      margin-bottom: 0.5rem;
+    }
+    .page-hero p { color: rgba(255,255,255,0.55); font-size: 0.95rem; }
+
+    .annonces-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2.5rem;
+      padding: 3rem 0 5rem;
+      align-items: start;
+    }
+    .filtres-panel {
+      background: var(--blanc);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gris-mid);
+      position: sticky;
+      top: 5rem;
+    }
+    .filtres-panel h3 {
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gris-texte);
+      margin-bottom: 1.5rem;
+    }
+    .filtre-section { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--gris-mid); }
+    .filtre-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .filtre-section label { display: block; font-size: 0.78rem; font-weight: 500; color: var(--gris-texte); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .filtre-section select,
+    .filtre-section input[type="number"],
+    .filtre-section input[type="text"] {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border: 1.5px solid var(--gris-mid);
+      border-radius: var(--radius);
+      background: var(--blanc);
+      color: var(--noir);
+      transition: border-color var(--transition);
+      outline: none;
+    }
+    .filtre-section select:focus,
+    .filtre-section input:focus { border-color: var(--vert); }
+    .filtre-checkboxes { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem; }
+    .filtre-checkboxes label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; color: var(--noir); text-transform: none; letter-spacing: 0; cursor: pointer; }
+    .filtre-checkboxes input { width: auto; }
+    .btn-filtrer {
+      width: 100%; background: var(--vert); color: var(--blanc);
+      padding: 0.8rem; border-radius: 50px; border: none;
+      font-size: 0.9rem; font-weight: 500; cursor: pointer;
+      font-family: var(--font-body); margin-bottom: 0.75rem;
+      transition: background var(--transition);
+    }
+    .btn-filtrer:hover { background: var(--vert-hover); }
+    .btn-reset {
+      width: 100%; background: transparent; color: var(--gris-texte);
+      padding: 0.8rem; border-radius: 50px;
+      border: 1.5px solid var(--gris-mid);
+      font-size: 0.88rem; cursor: pointer; font-family: var(--font-body);
+      transition: all var(--transition);
+    }
+    .btn-reset:hover { border-color: var(--vert); color: var(--vert); }
+
+    .annonces-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;
+    }
+    .annonces-count { font-size: 0.9rem; color: var(--gris-texte); }
+    .annonces-count strong { color: var(--noir); }
+    .annonces-sort select {
+      font-family: var(--font-body); font-size: 0.88rem;
+      padding: 0.5rem 0.9rem; border: 1.5px solid var(--gris-mid);
+      border-radius: var(--radius); background: var(--blanc);
+      color: var(--noir); outline: none; cursor: pointer;
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 5rem 2rem;
+      color: var(--gris-texte);
+    }
+    .no-results .no-results-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+    .no-results h3 { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--noir); }
+
+    .pagination {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.4rem; margin-top: 3rem;
+    }
+    .page-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1.5px solid var(--gris-mid);
+      background: var(--blanc); color: var(--noir);
+      font-size: 0.88rem; cursor: pointer; font-family: var(--font-body);
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition);
+    }
+    .page-btn:hover, .page-btn.active { background: var(--vert); color: var(--blanc); border-color: var(--vert); }
+    .page-btn.prev-next { width: auto; padding: 0 1.1rem; border-radius: 50px; }
+
+    @media (max-width: 900px) {
+      .annonces-layout { grid-template-columns: 1fr; }
+      .filtres-panel { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.png" alt="Teranga Immo" class="logo-img"/>
+        <span>Teranga Immo</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="annonces.html" style="color:var(--vert)">Annonces</a></li>
+        <li><a href="index.html#temoignages">Avis</a></li>
+        <li><a href="index.html#apropos">À Propos</a></li>
+        <li><a href="reservation.html">Réserver</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn-outline" onclick="ouvrirModal('modal-connexion')">Connexion</button>
+        <button class="btn-primary" onclick="ouvrirModal('modal-inscription')">S'inscrire</button>
+      </div>
+      <button class="burger" id="burger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <div class="container">
+      <span class="section-tag" style="margin-bottom:1rem">Catalogue complet</span>
+      <h1>Toutes nos annonces</h1>
+      <p>Explorez l'ensemble de nos biens disponibles à Dakar, Saly Portudal et Mbour</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="annonces-layout">
+
+      <!-- Panneau filtres -->
+      <aside class="filtres-panel">
+        <h3>Filtrer les biens</h3>
+
+        <div class="filtre-section">
+          <label>Type de transaction</label>
+          <div class="search-tabs" style="margin-bottom:0">
+            <button class="tab active" data-type="location" onclick="setTypeAnnonces('location', this)">Location</button>
+            <button class="tab" data-type="vente" onclick="setTypeAnnonces('vente', this)">Vente</button>
+          </div>
+        </div>
+
+        <div class="filtre-section">
+          <label>Ville</label>
+          <select id="a-ville">
+            <option value="">Toutes les villes</option>
+            <option value="1">Dakar</option>
+            <option value="2">Saly Portudal</option>
+            <option value="3">Mbour</option>
+          </select>
+        </div>
+
+        <div class="filtre-section">
+          <label>Type de bien</label>
+          <select id="a-categorie">
+            <option value="">Tous types</option>
+            <option value="1">Appartement</option>
+            <option value="2">Villa</option>
+            <option value="3">Studio</option>
+            <option value="4">Chambre d'hôtel</option>
+            <option value="7">Résidence meublée</option>
+          </select>
+        </div>
+
+        <div class="filtre-section">
+          <label>Budget max (FCFA)</label>
+          <input type="number" id="a-prix" placeholder="Ex : 1 000 000"/>
+        </div>
+
+        <div class="filtre-section">
+          <label>Chambres min.</label>
+          <select id="a-chambres">
+            <option value="">Peu importe</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3">3+</option>
+            <option value="4">4+</option>
+          </select>
+        </div>
+
+        <div class="filtre-section">
+          <label>Mots-clés</label>
+          <input type="text" id="a-mots" placeholder="Ex : piscine, vue mer..."/>
+        </div>
+
+        <div class="filtre-section">
+          <label>Équipements</label>
+          <div class="filtre-checkboxes">
+            <label><input type="checkbox" id="a-meuble"/> Meublé</label>
+            <label><input type="checkbox" id="a-piscine"/> Piscine</label>
+            <label><input type="checkbox" id="a-vue-mer"/> Vue mer</label>
+            <label><input type="checkbox" id="a-securise"/> Sécurisé / gardienné</label>
+            <label><input type="checkbox" id="a-prestige"/> Prestige</label>
+          </div>
+        </div>
+
+        <button class="btn-filtrer" onclick="rechercherAnnonces()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Appliquer les filtres
+        </button>
+        <button class="btn-reset" onclick="resetFiltres()">Réinitialiser</button>
+      </aside>
+
+      <!-- Grille annonces -->
+      <div>
+        <div class="annonces-header">
+          <p class="annonces-count">Affichage de <strong id="count-display">6</strong> biens</p>
+          <div class="annonces-sort">
+            <select id="tri" onchange="rechercherAnnonces()">
+              <option value="recent">Plus récents</option>
+              <option value="prix-asc">Prix croissant</option>
+              <option value="prix-desc">Prix décroissant</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="biens-grid" id="annonces-grid">
+          <!-- Cartes chargées par JS -->
+        </div>
+
+        <div class="pagination" id="pagination"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="logo.png" alt="Logo" class="footer-logo"/>
+        <p>La plateforme immobilière de référence au Sénégal.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Navigation</h4>
+        <a href="index.html">Accueil</a>
+        <a href="annonces.html">Toutes les annonces</a>
+        <a href="reservation.html">Réservation</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+      <div class="footer-links">
+        <h4>Villes</h4>
+        <a href="#">Dakar</a>
+        <a href="#">Saly Portudal</a>
+        <a href="#">Mbour</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Teranga Immo — Tous droits réservés</p>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="modal-connexion" onclick="fermerModalOverlay(event, 'modal-connexion')">
+    <div class="modal">
+      <button class="modal-close" onclick="fermerModal('modal-connexion')">✕</button>
+      <h2 class="modal-title">Connexion</h2>
+      <form onsubmit="connecter(event)">
+        <div class="form-group"><label>Email</label><input type="email" id="login-email" required/></div>
+        <div class="form-group"><label>Mot de passe</label><input type="password" id="login-mdp" required/></div>
+        <div class="modal-error" id="login-error"></div>
+        <button type="submit" class="btn-submit">Se connecter</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-inscription" onclick="fermerModalOverlay(event, 'modal-inscription')">
+    <div class="modal">
+      <button class="modal-close" onclick="fermerModal('modal-inscription')">✕</button>
+      <h2 class="modal-title">Créer un compte</h2>
+      <form onsubmit="inscrire(event)">
+        <div class="form-row">
+          <div class="form-group"><label>Nom</label><input type="text" id="reg-nom" required/></div>
+          <div class="form-group"><label>Prénom</label><input type="text" id="reg-prenom" required/></div>
+        </div>
+        <div class="form-group"><label>Email</label><input type="email" id="reg-email" required/></div>
+        <div class="form-group"><label>Téléphone</label><input type="tel" id="reg-tel"/></div>
+        <div class="form-group"><label>Mot de passe</label><input type="password" id="reg-mdp" required/></div>
+        <div class="modal-error" id="reg-error"></div>
+        <div class="modal-success" id="reg-success"></div>
+        <button type="submit" class="btn-submit">Créer mon compte</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-bien" onclick="fermerModalOverlay(event, 'modal-bien')">
+    <div class="modal modal-large">
+      <button class="modal-close" onclick="fermerModal('modal-bien')">✕</button>
+      <div id="modal-bien-content"></div>
+    </div>
+  </div>
+
+  <a href="https://wa.me/221781733682" target="_blank" class="whatsapp-btn" title="WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <span>WhatsApp</span>
+  </a>
+
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
+  <script>
+    const API = 'http://localhost:3000/api';
+    let typeAnnonces = 'location';
+    let pageCourante = 1;
+    const PAR_PAGE = 9;
+
+    function setTypeAnnonces(type, btn) {
+      typeAnnonces = type;
+      document.querySelectorAll('.search-tabs .tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function resetFiltres() {
+      document.getElementById('a-ville').value = '';
+      document.getElementById('a-categorie').value = '';
+      document.getElementById('a-prix').value = '';
+      document.getElementById('a-chambres').value = '';
+      document.getElementById('a-mots').value = '';
+      ['a-meuble','a-piscine','a-vue-mer','a-securise','a-prestige'].forEach(id => {
+        document.getElementById(id).checked = false;
+      });
+      rechercherAnnonces();
+    }
+
+    async function rechercherAnnonces(page = 1) {
+      pageCourante = page;
+      const params = new URLSearchParams();
+      params.append('type', typeAnnonces);
+      const ville = document.getElementById('a-ville').value;
+      const cat   = document.getElementById('a-categorie').value;
+      const prix  = document.getElementById('a-prix').value;
+      const ch    = document.getElementById('a-chambres').value;
+      if (ville) params.append('ville', ville);
+      if (cat)   params.append('categorie', cat);
+      if (prix)  params.append('prix_max', prix);
+      if (ch)    params.append('chambres', ch);
+      if (document.getElementById('a-meuble').checked)   params.append('meuble','1');
+      if (document.getElementById('a-piscine').checked)  params.append('piscine','1');
+      if (document.getElementById('a-vue-mer').checked)  params.append('vue_mer','1');
+      if (document.getElementById('a-prestige').checked) params.append('prestige','1');
+      params.append('page', page);
+      params.append('limite', PAR_PAGE);
+
+      try {
+        const res  = await fetch(`${API}/biens?${params}`);
+        const data = await res.json();
+        afficherAnnonces(data.biens || [], data.total || 0);
+      } catch {
+        afficherAnnoncesFallback();
+      }
+    }
+
+    function afficherAnnonces(biens, total) {
+      const grille = document.getElementById('annonces-grid');
+      document.getElementById('count-display').textContent = total || biens.length;
+
+      if (biens.length === 0) {
+        grille.innerHTML = `
+          <div class="no-results">
+            <div class="no-results-icon">🏠</div>
+            <h3>Aucun bien trouvé</h3>
+            <p>Essayez d'élargir vos critères de recherche.</p>
+            <button class="btn-outline-dark" style="margin-top:1.5rem" onclick="resetFiltres()">Réinitialiser les filtres</button>
+          </div>`;
+        document.getElementById('pagination').innerHTML = '';
+        return;
+      }
+
+      grille.innerHTML = biens.map((b, i) => {
+        const prix  = b.prix_vente
+          ? `${Number(b.prix_vente).toLocaleString('fr-FR')} <small>FCFA</small>`
+          : `${Number(b.prix_location).toLocaleString('fr-FR')} <small>FCFA/mois</small>`;
+        const badge = b.prix_vente ? 'vente' : 'location';
+        const photo = b.photo_principale || 'appartnonmeuble.png';
+        return `
+          <article class="bien-card" style="animation-delay:${i*0.06}s" data-id="${b.id_bien}">
+            <div class="card-img-wrap">
+              <img src="${photo}" alt="${b.titre}" loading="lazy" onerror="this.src='appartnonmeuble.png'"/>
+              <span class="card-badge ${badge}">${badge === 'vente' ? 'Vente' : 'Location'}</span>
+              <button class="card-fav" onclick="toggleFavori(this,${b.id_bien})">♡</button>
+            </div>
+            <div class="card-body">
+              <div class="card-ville">📍 ${b.nom_ville || ''}</div>
+              <h3 class="card-titre">${b.titre}</h3>
+              <div class="card-features">
+                ${b.nb_chambres ? `<span>🛏 ${b.nb_chambres} ch.</span>` : ''}
+                ${b.surface_m2  ? `<span>📐 ${b.surface_m2} m²</span>` : ''}
+                ${b.piscine     ? `<span>🏊 Piscine</span>` : ''}
+              </div>
+              <div class="card-footer">
+                <div class="card-prix">${prix}</div>
+                <button class="btn-card" onclick="voirBien(${b.id_bien})">Voir</button>
+              </div>
+            </div>
+          </article>`;
+      }).join('');
+
+      afficherPagination(total);
+    }
+
+    function afficherAnnoncesFallback() {
+      // Biens statiques si l'API est hors ligne
+      const biens = [
+        {id_bien:1, titre:'Appartement vue sur mer', nom_ville:'Saly Portudal', prix_location:1000000, nb_chambres:3, surface_m2:120, photo_principale:'appartvuesurmer.png'},
+        {id_bien:2, titre:'Villa avec piscine', nom_ville:'Saly Portudal', prix_vente:85000000, nb_chambres:5, surface_m2:350, piscine:true, photo_principale:'appartvuepiscine.png'},
+        {id_bien:3, titre:'Appartement vue piscine', nom_ville:'Mbour', prix_location:1200000, nb_chambres:2, surface_m2:85, piscine:true, photo_principale:'appartvuepiscine.png'},
+        {id_bien:4, titre:'Résidence meublée', nom_ville:'Dakar', prix_location:600000, nb_chambres:4, surface_m2:200, photo_principale:'residence.png'},
+        {id_bien:5, titre:'Villa à vendre', nom_ville:'Dakar', prix_vente:200000000, nb_chambres:4, surface_m2:280, photo_principale:'villaavendre.png'},
+        {id_bien:6, titre:'Appartement non meublé', nom_ville:'Dakar', prix_location:1200000, nb_chambres:2, surface_m2:75, photo_principale:'appartnonmeuble.png'},
+      ];
+      afficherAnnonces(biens, biens.length);
+    }
+
+    function afficherPagination(total) {
+      const pages = Math.ceil(total / PAR_PAGE);
+      const pag   = document.getElementById('pagination');
+      if (pages <= 1) { pag.innerHTML = ''; return; }
+      let html = `<button class="page-btn prev-next" onclick="rechercherAnnonces(${pageCourante-1})" ${pageCourante===1?'disabled':''}>← Préc.</button>`;
+      for (let i = 1; i <= pages; i++) {
+        html += `<button class="page-btn ${i===pageCourante?'active':''}" onclick="rechercherAnnonces(${i})">${i}</button>`;
+      }
+      html += `<button class="page-btn prev-next" onclick="rechercherAnnonces(${pageCourante+1})" ${pageCourante===pages?'disabled':''}>Suiv. →</button>`;
+      pag.innerHTML = html;
+    }
+
+    // Chargement initial
+    rechercherAnnonces();
+  </script>
+</body>
+</html>

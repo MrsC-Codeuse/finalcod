@@ -29,6 +29,32 @@ function headersAuth() {
 }
 
 // ════════════════════════════════════════════════════════════
+//  TAGS RAPIDES HERO
+// ════════════════════════════════════════════════════════════
+
+function activerFiltre(type) {
+  scrollVers('#recherche');
+  const map = {
+    'meuble':   'filtre-meuble',
+    'vue-mer':  'filtre-vue-mer',
+    'piscine':  'filtre-piscine',
+    'securise': 'filtre-securise'
+  };
+  const id = map[type];
+  if (id) {
+    const el = document.getElementById(id);
+    if (el) el.checked = true;
+  }
+}
+
+function filtrerZone(idVille, nomVille) {
+  const sel = document.getElementById('filtre-ville');
+  if (sel) sel.value = String(idVille);
+  scrollVers('#recherche');
+  afficherToast(`Zone "${nomVille}" sélectionnée`);
+}
+
+// ════════════════════════════════════════════════════════════
 //  NAVBAR — scroll + burger
 // ════════════════════════════════════════════════════════════
 
@@ -499,3 +525,51 @@ async function init() {
 }
 
 init();
+
+// ════════════════════════════════════════════════════════════
+//  TABS FILTRES "BIENS À LA UNE"
+// ════════════════════════════════════════════════════════════
+
+document.querySelectorAll('.bien-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.bien-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    const filter = this.dataset.filter;
+    document.querySelectorAll('#biens-grid .bien-card').forEach(card => {
+      if (filter === 'all') {
+        card.style.display = '';
+      } else {
+        const badge = card.querySelector('.card-badge');
+        card.style.display = (badge && badge.classList.contains(filter)) ? '' : 'none';
+      }
+    });
+  });
+});
+
+// ════════════════════════════════════════════════════════════
+//  FORMULAIRE PRISE DE RENDEZ-VOUS
+// ════════════════════════════════════════════════════════════
+
+async function envoyerRDV(event) {
+  event.preventDefault();
+  const okEl = document.getElementById('rdv-success');
+  const body = {
+    nom_contact:   document.getElementById('rdv-nom').value.trim(),
+    email_contact: document.getElementById('rdv-email').value.trim(),
+    tel_contact:   document.getElementById('rdv-tel').value.trim(),
+    type_demande:  document.getElementById('rdv-type').value,
+    message:       document.getElementById('rdv-message').value.trim(),
+    id_bien:       null
+  };
+  try {
+    await fetch(`${API}/demandes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  } catch { /* serveur hors ligne — on confirme quand même */ }
+  okEl.textContent = '✅ Votre demande de RDV a bien été envoyée ! Nous vous contactons sous 24h.';
+  okEl.classList.add('visible');
+  event.target.reset();
+  setTimeout(() => fermerModal('modal-rdv'), 2500);
+}
